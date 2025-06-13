@@ -1,0 +1,31 @@
+body {
+  /* Always show scroll bar, but hide it visually for a clean look */
+  scrollbar-width: thin;
+  scrollbar-color: #444 #222;
+  scrollbar-color: #ff0000 #222;
+}
+
+body::-webkit-scrollbar {
+  width: 8px;
+  background: transparent;
+}
+
+body::-webkit-scrollbar-thumb {
+  background: #444;
+  border-radius: 4px;
+}
+
+body::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+/* Hide scrollbars for elements with .scrollbar-hidden but allow scrolling */
+.scrollbar-hidden {
+  overflow: auto;                /* Enables scrolling */
+  scrollbar-width: none;        /* Firefox */
+  -ms-overflow-style: none;     /* IE 10+ */
+}
+
+.scrollbar-hidden::-webkit-scrollbar {
+  display: none;                /* Chrome/Safari/Webkit */
+}

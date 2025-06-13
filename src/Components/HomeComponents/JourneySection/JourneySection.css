@@ -1,0 +1,138 @@
+/* JourneySection.css */
+.journey-wrapper {
+  max-width: 1200px;
+  margin: auto;
+  padding: 2rem 1rem;
+  text-align: center;
+}
+
+.journey-title {
+  font-size: 4rem;
+  font-weight: bold;
+  margin-bottom: 1rem;
+}
+
+.journey-subtitle {
+  font-size: 2rem;
+  color: #666;
+  max-width: 600px;
+  margin: 0 auto 2rem;
+}
+
+.journey-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin: 1rem 0;
+  gap: 0.75rem;
+}
+
+.btn {
+  padding: 0.5rem 1rem;
+  border: 1px solid #ccc;
+  background: #fff;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  font-size:2rem;
+  margin-bottom: 1rem;
+}
+
+.btn:hover {
+  border-color: #000;
+}
+
+.btn-active {
+  background-color: #000;
+  color: #fff;
+  border-color: #000;
+}
+
+.journey-cards {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 2rem;
+  margin: 2rem 0;
+}
+
+.card {
+  background: #fff;
+  border-radius: 1rem;
+  padding: 1.5rem;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
+  width: 50rem;
+  max-width: 50rem;
+  text-align: left;
+  transition: transform 0.3s ease;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+}
+
+.card-default {
+  border: 2px solid #ddd;
+}
+
+.card-highlight {
+  border: 2px solid #000;
+  background: #f9f9f9;
+}
+
+.card-subtitle {
+  font-size: 3rem;
+  color: #999;
+  margin-bottom: 0.5rem;
+}
+
+.card-title {
+  font-size: 2.5rem;
+  font-weight: bold;
+  margin-bottom: 1rem;
+}
+
+.card-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.card-list-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid #eee;
+  font-size: 1.95rem;
+}
+
+.card-list-item:last-child {
+  border-bottom: none;
+}
+
+.journey-footer {
+  font-size: 0.875rem;
+  margin-top: 2rem;
+  color: #555;
+}
+
+.underline {
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .journey-title {
+    font-size: 3rem;
+  }
+
+  .card {
+    width: 100%;
+  }
+
+  .journey-subtitle {
+    font-size: 2rem;
+  }
+}
