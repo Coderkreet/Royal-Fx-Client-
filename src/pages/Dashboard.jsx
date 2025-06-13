@@ -113,27 +113,7 @@ const SkeletonLoader = () => {
         </div>
 
         <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
-          {/* Market Overview Skeleton */}
-          <div className="xl:col-span-2">
-            <div className="bg-gray-800/50 backdrop-blur-sm border border-gray-700/50 rounded-2xl p-6 shadow-2xl">
-              <div className="animate-pulse">
-                <div className="flex justify-between mb-6">
-                  <div className="h-6 bg-gray-700 rounded w-40"></div>
-                  <div className="h-6 bg-gray-700 rounded w-24"></div>
-                </div>
-                {[...Array(5)].map((_, i) => (
-                  <div key={i} className="flex items-center gap-4 p-4 bg-gray-700/30 rounded-xl mb-3">
-                    <div className="w-10 h-10 bg-gray-600 rounded-full"></div>
-                    <div className="flex-1">
-                      <div className="h-4 bg-gray-600 rounded w-24 mb-2"></div>
-                      <div className="h-3 bg-gray-700 rounded w-16"></div>
-                    </div>
-                    <div className="h-8 bg-gray-600 rounded w-20"></div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
+         
 
           {/* Refer & Earn Section Skeleton */}
           <div className="space-y-6">
@@ -265,7 +245,7 @@ const Dashboard = () => {
 
   const copyReferralCode = async () => {
     try {
-      await navigator.clipboard.writeText(user?.data?.referralLink || '');
+      await navigator.clipboard.writeText(user?.data?.username || '');
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     } catch (err) {
@@ -278,8 +258,8 @@ const Dashboard = () => {
       try {
         await navigator.share({
           title: 'Join me on CryptoMiner',
-          text: `Use my referral code: ${user?.data?.referralLink}`,
-          url: window.location.origin + '/refer-and-earn/register?referral=' + user?.data?.referralLink,
+          text: `Use my referral code: ${user?.data?.username}`,
+          url: window.location.origin + '/refer-and-earn/register?referral=' + user?.data?.username,
         });
       } catch (err) {
         console.log('Error sharing:', err);
@@ -379,101 +359,55 @@ const Dashboard = () => {
               {/* <p className="text-sm text-gray-500 mt-1">Ready to start earning</p> */}
             </div>
           </div>
+           <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-6">
+                {/* Total Withdrawal */}
+                <div className="bg-gray-800/60 backdrop-blur-sm border border-gray-700/50 rounded-xl p-4 shadow flex flex-col items-center">
+                  <TrendingDown className="w-6 h-6 text-red-400 mb-1" />
+                  <div className="text-xs text-gray-400 mb-1">Total Withdrawal</div>
+                  <div className="text-lg font-bold text-red-400">
+                    {/* ${Number(user?.data?.account?.totalWithdrawal || 0).toFixed(2)}  */}
+                    899
+                  </div>
+                </div>
+                {/* Active Strategies */}
+                <div className="bg-gray-800/60 backdrop-blur-sm border border-gray-700/50 rounded-xl p-4 shadow flex flex-col items-center">
+                  <TrendingUp className="w-6 h-6 text-green-400 mb-1" />
+                  <div className="text-xs text-gray-400 mb-1">Active Strategies</div>
+                  <div className="text-lg font-bold text-green-400">
+                    {/* {user?.data?.account?.activeStrategies || 0} */}
+                    900
+                  </div>
+                </div>
+                {/* Total Referral Earnings */}
+                <div className="bg-gray-800/60 backdrop-blur-sm border border-gray-700/50 rounded-xl p-4 shadow flex flex-col items-center md:col-span-1 col-span-2">
+                  <Gift className="w-6 h-6 text-purple-400 mb-1" />
+                  <div className="text-xs text-gray-400 mb-1">Referral Earnings</div>
+                  <div className="text-lg font-bold text-purple-400">
+                    ${user?.data?.account?.totalReferralEarning || 0}
+                  </div>
+                </div>
+              </div>
         </div>
 
         <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
-          {/* Market Overview */}
-          <div className="xl:col-span-2">
-            <div className="bg-gray-800/50 backdrop-blur-sm border border-gray-700/50 rounded-2xl p-4 sm:p-6 shadow-2xl">
-              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-0 mb-4 sm:mb-6">
-                <div>
-                  <h2 className="text-lg sm:text-2xl font-bold text-white">Market Overview</h2>
-                  <p className="text-gray-400 text-xs sm:text-base">Top 5 cryptocurrencies</p>
-                </div>
-                {/* <div className="flex items-center gap-2 mt-2 sm:mt-0">
-                  {loading && <RefreshCw className="w-4 h-4 animate-spin text-blue-400" />}
-                  <button
-                    onClick={handleSeeMoreCoins}
-                    className="text-blue-400 hover:text-blue-300 flex items-center gap-1 text-xs sm:text-sm transition-colors duration-200"
-                  >
-                    See all coins <ExternalLink className="w-4 h-4" />
-                  </button>
-                </div> */}
-              </div>
-
-              {loading ? (
-                <div className="space-y-3 sm:space-y-4">
-                  {[...Array(5)].map((_, i) => (
-                    <div key={i} className="animate-pulse">
-                      <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-4 p-3 sm:p-4 bg-gray-700/30 rounded-xl">
-                        <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gray-600 rounded-full"></div>
-                        <div className="flex-1 w-full">
-                          <div className="h-4 bg-gray-600 rounded w-1/2 sm:w-1/4 mb-2"></div>
-                          <div className="h-3 bg-gray-700 rounded w-1/3 sm:w-1/6"></div>
-                        </div>
-                        <div className="h-8 bg-gray-600 rounded w-16 sm:w-20 mt-2 sm:mt-0"></div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <div className="space-y-2 sm:space-y-3">
-                  {marketData.map((coin, index) => {
-                    const isPositive = coin.priceChangePercentage24h >= 0;
-                    return (
-                      <div 
-                        key={coin.marketCap}
-                        className="flex flex-col sm:flex-row items-center gap-2 sm:gap-4 p-3 sm:p-4 bg-gray-700/20 hover:bg-gray-700/40 rounded-xl transition-all duration-300 cursor-pointer group"
-                      >
-                        <div className="flex items-center gap-2 sm:gap-3 flex-1 w-full">
-                          <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-gray-700 flex items-center justify-center overflow-hidden">
-                            <img 
-                              src={coin.imgSrc} 
-                              alt={coin.name}
-                              className="w-full h-full object-cover"
-                              onError={(e) => {
-                                e.target.src = "/api/placeholder/40/40";
-                              }}
-                            />
-                          </div>
-                          <div>
-                            <div className="text-white font-semibold text-sm sm:text-base">{coin.marketCap}</div>
-                            <div className="text-gray-400 text-xs sm:text-sm">${coin.price}</div>
-                          </div>
-                        </div>
-                        
-                        <div className="flex flex-col sm:flex-row items-center gap-1 sm:gap-3">
-                          <div className="flex items-center gap-1 sm:gap-2">
-                            {isPositive ? (
-                              <TrendingUp className="w-4 h-4 text-green-400" />
-                            ) : (
-                              <TrendingDown className="w-4 h-4 text-red-400" />
-                            )}
-                            <div className={`font-semibold text-xs sm:text-base ${isPositive ? 'text-green-400' : 'text-red-400'}`}>
-                              <div>${Math.abs(coin.priceChange24h).toFixed(2)}</div>
-                              <div className="text-xs sm:text-sm">
-                                ({isPositive ? '+' : ''}{coin.priceChangePercentage24h.toFixed(2)}%)
-                              </div>
-                            </div>
-                          </div>
-                          <SmallLineChart 
-                            data={coin.percentageVal} 
-                            percentage={coin.percentage} 
-                          />
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              )}
-
-              {/* <button
-                onClick={handleSeeMoreCoins}
-                className="w-full mt-4 sm:mt-6 bg-gray-700/30 hover:bg-gray-700/50 border border-gray-600/50 text-white py-2 sm:py-3 rounded-xl transition-all duration-300 flex items-center justify-center gap-2 group text-sm sm:text-base"
-              >
-                <span>View All Cryptocurrencies</span>
-                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-200" />
-              </button> */}
+          <div className="xl:col-span-2 grid grid-cols-1 md:grid-cols-3 gap-6">
+            {/* Total Withdrawal */}
+            <div className="bg-gray-800/50 backdrop-blur-sm border border-gray-700/50 rounded-2xl p-6 shadow-xl flex flex-col justify-center">
+              <h3 className="text-lg font-semibold text-gray-300 mb-2 flex items-center gap-2">
+                <TrendingDown className="w-5 h-5 text-red-400" /> Total Withdrawal
+              </h3>
+              <p className="text-3xl font-bold text-red-400">
+                ${Number(user?.data?.account?.totalWithdrawal || 0).toFixed(2)}
+              </p>
+            </div>
+            {/* Active Strategies */}
+            <div className="bg-gray-800/50 backdrop-blur-sm border border-gray-700/50 rounded-2xl p-6 shadow-xl flex flex-col justify-center">
+              <h3 className="text-lg font-semibold text-gray-300 mb-2 flex items-center gap-2">
+                <TrendingUp className="w-5 h-5 text-green-400" /> Active Strategies
+              </h3>
+              <p className="text-3xl font-bold text-green-400">
+                {user?.data?.account?.activeStrategies || 0}
+              </p>
             </div>
           </div>
 
@@ -497,7 +431,7 @@ const Dashboard = () => {
                   <div className="text-sm text-gray-400 mb-2">Your Referral Code</div>
                   <div className="flex items-center gap-2">
                     <div className="flex-1 bg-gray-800/50 rounded-lg px-3 py-2 font-mono text-blue-400 text-sm">
-                      {user?.data?.referralLink || 'LOADING...'}
+                      {user?.data?.username || 'LOADING...'}
                     </div>
                     <button
                       onClick={copyReferralCode}

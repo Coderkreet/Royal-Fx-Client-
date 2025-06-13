@@ -146,7 +146,7 @@ const HeroSection = () => {
             <div className="w-2/3 text-left">
               <h1 className="text-5xl sm:text-7xl md:text-8xl lg:text-[8rem] font-black mb-6 relative">
                 <span className="bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-600 text-transparent bg-clip-text animate-pulse">
-                  Z-Coin
+                  Royal-Fx
                 </span>
                 {/* Glow effect */}
                 <div className="absolute inset-0 bg-gradient-to-r from-cyan-400/20 via-blue-500/20 to-purple-600/20 blur-3xl -z-10"></div>
@@ -176,13 +176,13 @@ const HeroSection = () => {
                     <span className="text-white font-bold text-xl">Z</span>
                   </div>
                   <div>
-                    <h3 className="text-2xl font-bold text-white">Z-Coin Platform</h3>
+                    <h3 className="text-2xl font-bold text-white">Royal-Fx Platform</h3>
                     <p className="text-cyan-300 text-sm">CryptoZ Investment Plan</p>
                   </div>
                 </div>
                 
                 <p className="text-gray-200 text-lg sm:text-xl leading-relaxed tracking-wide">
-                  In the fast-paced world of digital finance, <strong className="text-cyan-400">Z-Coin</strong> emerges as a next-generation investment solution designed for both beginners and seasoned investors. Built under the CryptoZ Investment Plan, Z-Coin is more than just a cryptocurrency — it's a 
+                  In the fast-paced world of digital finance, <strong className="text-cyan-400">Royal-Fx</strong> emerges as a next-generation investment solution designed for both beginners and seasoned investors. Built under the CryptoZ Investment Plan, Royal-Fx is more than just a cryptocurrency — it's a 
                   <strong className="text-purple-400"> secure, innovative, and community-driven</strong> digital asset that empowers users to grow their wealth through smart, transparent, and decentralized investments.
                 </p>
               </div>

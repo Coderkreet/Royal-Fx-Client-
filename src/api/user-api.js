@@ -4,7 +4,7 @@ const userApi = "/user";
 const walletApi = "/wallet";
 
 export async function getUserInfo() {
-  const response = await Axios.get(`${userApi}/get-user`);
+  const response = await Axios.get(`${userApi}/profile`);
   return response?.data;
 }
 export async function getDirectUsers() {

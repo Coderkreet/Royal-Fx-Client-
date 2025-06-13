@@ -70,7 +70,7 @@ const TokenomicsTable = () => {
       {/* Header */}
       <div className="text-center mb-12">
         <h2 className="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500 mb-4">
-          Z-Coin Tokenomics
+          Royal-Fx Tokenomics
         </h2>
         <p className="text-gray-400 text-lg">
           Complete token distribution and allocation details

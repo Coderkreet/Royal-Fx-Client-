@@ -35,7 +35,7 @@ const ConversionDetail = ({ onHide, data }) => {
             <div className="text-right">
               <div className="text-sm text-slate-400">Amount</div>
               <div className="text-xl font-bold text-green-400">
-                +{data?.from?.value} Z-Coin
+                +{data?.from?.value} Royal-Fx
               </div>
             </div>
           </div>

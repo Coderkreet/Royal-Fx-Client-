@@ -1,3 +1,26 @@
 @tailwind base;
 @tailwind Components;
 @tailwind utilities;
+
+/* Custom thin and elegant scrollbar for WebKit browsers */
+::-webkit-scrollbar {
+  width: 6px; /* slim width */
+  height: 6px; /* for horizontal scrollbar */
+}
+
+/* Track (background of the scrollbar) */
+::-webkit-scrollbar-track {
+  background: #193370; 
+  border-radius: 10px;
+}
+
+/* Thumb (draggable handle) */
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(135deg, #3d3dd1, #2d5fb4);
+  border-radius: 10px;
+}
+
+/* On hover */
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(135deg, #5555ef, #506cf8);
+}

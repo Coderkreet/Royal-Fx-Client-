@@ -24,7 +24,7 @@ const Sidebar = ({ isExpanded, setIsExpanded }) => {
   const menuItems = [
     { icon: <Home size={20} />, text: "Home", path: AuthenticatedRoutes.DASHBOARD },
     // { icon: <SiMarketo size={20} />, text: "Market", path: AuthenticatedRoutes.MARKET },
-    { icon: <PiHandCoinsFill size={20} />, text: "Z-Coin", path: AuthenticatedRoutes.NEBULUX_COIN },
+    { icon: <PiHandCoinsFill size={20} />, text: "Royal-Fx", path: AuthenticatedRoutes.NEBULUX_COIN },
     { icon: <MdCurrencyExchange size={20} />, text: "Swapping", path: AuthenticatedRoutes.TRADING },
     { icon: <SiTradingview size={20} />, text: "Packages", path: AuthenticatedRoutes.OUR_PLANS },
     { icon: <Group size={20} />, text: "Referral", path: AuthenticatedRoutes.MY_TEAM },

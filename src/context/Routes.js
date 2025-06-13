@@ -22,7 +22,7 @@ export const AuthenticatedRoutes = {
   SETTINGS: "/settings",
   HELP: "/help",
   MARKET: "/market",
-  NEBULUX_COIN: "/Z-Coin",
+  NEBULUX_COIN: "/Royal-Fx",
   MARKET_DETAIL: "/coin-details",
   TRADING: "/trading",
   OUR_PLANS: "/our-plans",

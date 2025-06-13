@@ -53,7 +53,8 @@ const DualOtpVerificationPopup = ({ show, onHide, payload, otpSubmitHandler }) =
 
     if (isEmailValid) {
       otpSubmitHandler({
-        emailOtp: emailOtp.join(''),
+        email: payload.email,
+        otp: emailOtp.join('')
       });
     }
     setIsVerifying(false);

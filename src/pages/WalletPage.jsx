@@ -545,7 +545,7 @@ export default function WalletPage() {
             amountSkeleton()
           ) : (
             <>
-                <div className="text-lg sm:text-xl font-bold mb-1">{Number(user?.account?.currentIncome).toFixed(2)} Z-Coin</div>
+                <div className="text-lg sm:text-xl font-bold mb-1">{Number(user?.account?.currentIncome).toFixed(2)} Royal-Fx</div>
             </>
           )}
 

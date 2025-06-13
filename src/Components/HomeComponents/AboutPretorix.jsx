@@ -49,7 +49,7 @@ const AboutPretorix = () => {
             <div className="relative mb-8">
               <div className="absolute -left-4 top-0 w-1 h-full bg-gradient-to-b from-[#2eb4e0] to-cyan-300 rounded-full"></div>
               <h1 className="text-4xl lg:text-7xl md:text-5xl sm:text-3xl font-bold bg-gradient-to-r from-[#2eb4e0] via-cyan-400 to-blue-500 bg-clip-text text-transparent leading-tight ml-8">
-                About Z-Coin
+                About Royal-Fx
               </h1>
             </div>
 
@@ -57,7 +57,7 @@ const AboutPretorix = () => {
             <div className="space-y-6 text-lg lg:text-xl text-gray-300 leading-relaxed xl:px-7">
               <div className="bg-gradient-to-r from-[#2eb4e0]/10 to-transparent rounded-2xl p-6 border-l-4 border-[#2eb4e0]">
                 <p>
-                  <span className="text-[#2eb4e0] font-bold">Z-Coin</span> is a future-focused crypto investment token designed to make digital wealth building easy, secure, and rewarding. Backed by the CryptoZ Investment Plan, it offers a range of flexible investment tiers with fixed monthly returns, transparent tracking, and blockchain-powered security — making it ideal for both new and experienced investors seeking passive income and long-term financial growth in the decentralized economy.
+                  <span className="text-[#2eb4e0] font-bold">Royal-Fx</span> is a future-focused crypto investment token designed to make digital wealth building easy, secure, and rewarding. Backed by the CryptoZ Investment Plan, it offers a range of flexible investment tiers with fixed monthly returns, transparent tracking, and blockchain-powered security — making it ideal for both new and experienced investors seeking passive income and long-term financial growth in the decentralized economy.
                 </p>
               </div>
               

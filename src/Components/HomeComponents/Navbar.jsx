@@ -215,7 +215,7 @@ const navigate = useNavigate();
 
         {/* Footer */}
         <div className="p-6 border-t border-slate-700/50">
-          <p className="text-xs text-slate-500 text-center">© 2024 Z-Coin. All rights reserved.</p>
+          <p className="text-xs text-slate-500 text-center">© 2024 Royal-Fx. All rights reserved.</p>
         </div>
       </div>
 

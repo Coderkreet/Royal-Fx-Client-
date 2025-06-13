@@ -6,14 +6,14 @@ export default function ZCoinEarningGuide() {
       // number: 1,
       title: "Choose Your Investment Plan",
       description: "Browse through our flexible plans — Starter, Bronze, Silver, Gold, or Platinum. Each plan comes with a fixed Monthly ROI, lock-in period, and total ROI.",
-      highlight: "Start with as low as 100 Z-Coin.",
+      highlight: "Start with as low as 100 Royal-Fx.",
       icon: Search,
       color: "blue"
     },
     {
       // number: 2,
       title: "Invest & Lock-In",
-      description: "Once you select your plan, invest your Z-Coins and lock in for the chosen duration. Your funds are securely held and start generating monthly returns immediately.",
+      description: "Once you select your plan, invest your Royal-Fxs and lock in for the chosen duration. Your funds are securely held and start generating monthly returns immediately.",
       icon: Lock,
       color: "green"
     },
@@ -31,7 +31,7 @@ export default function ZCoinEarningGuide() {
   const bonusFeatures = [
     {
       icon: Coins,
-      title: "More Z-Coins = Higher Monthly ROI",
+      title: "More Royal-Fxs = Higher Monthly ROI",
       description: "Increase your investment amount for better returns"
     },
     {
@@ -88,7 +88,7 @@ export default function ZCoinEarningGuide() {
             <Wallet className="w-8 h-8 text-yellow-400" />
           </div>
           <h1 className="text-5xl font-bold mb-6 tracking-tight">
-            How to Earn with <span className="text-blue-400">Z-Coin</span>
+            How to Earn with <span className="text-blue-400">Royal-Fx</span>
           </h1>
           <p className="text-xl text-gray-300 max-w-3xl mx-auto leading-relaxed">
             <strong>Start earning in 3 simple steps. No hassle. Just crypto rewards.</strong>

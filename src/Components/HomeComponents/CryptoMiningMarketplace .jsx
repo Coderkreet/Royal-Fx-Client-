@@ -80,7 +80,7 @@ const CryptoMiningMarketplace = () => {
     {
       id: 6,
       name: 'NebulaBoost',
-      coin: 'Z-Coin',
+      coin: 'Royal-Fx',
       symbol: '⧫',
       color: '#6C5CE7',
       hashrate: '0.8',

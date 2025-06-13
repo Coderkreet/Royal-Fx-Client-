@@ -10,7 +10,7 @@ export async function getProductPurchaseHistory() {
   return response?.data;
 }
 export async function purchaseProduct(payload) {
-  const response = await Axios.post(`${userApi}/purchase-miner`, payload);
+  const response = await Axios.post(`${userApi}/purchase-products`, payload);
   return response?.data;
 }
 export async function changeStatusTOUnlock(payload) {

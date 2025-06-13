@@ -8,7 +8,7 @@ export default function ZCoinInvestmentPlans() {
       name: "Starter Plan",
       color: "green",
       emoji: "🟢",
-      investment: "100 Z-Coin",
+      investment: "100 Royal-Fx",
       monthlyROI: "6%",
       lockPeriod: "6 Months",
       totalROI: "36%",
@@ -24,7 +24,7 @@ export default function ZCoinInvestmentPlans() {
       name: "Bronze Plan",
       color: "orange",
       emoji: "🟠",
-      investment: "500 Z-Coin",
+      investment: "500 Royal-Fx",
       monthlyROI: "7%",
       lockPeriod: "8 Months",
       totalROI: "56%",
@@ -41,7 +41,7 @@ export default function ZCoinInvestmentPlans() {
       name: "Silver Plan",
       color: "gray",
       emoji: "⚪",
-      investment: "1000 Z-Coin",
+      investment: "1000 Royal-Fx",
       monthlyROI: "8%",
       lockPeriod: "10 Months",
       totalROI: "80%",
@@ -58,7 +58,7 @@ export default function ZCoinInvestmentPlans() {
       name: "Gold Plan",
       color: "yellow",
       emoji: "🟡",
-      investment: "2000 Z-Coin",
+      investment: "2000 Royal-Fx",
       monthlyROI: "9%",
       lockPeriod: "12 Months",
       totalROI: "108%",
@@ -76,7 +76,7 @@ export default function ZCoinInvestmentPlans() {
       name: "Platinum Plan",
       color: "blue",
       emoji: "🔵",
-      investment: "5000 Z-Coin",
+      investment: "5000 Royal-Fx",
       monthlyROI: "10%",
       lockPeriod: "15 Months",
       totalROI: "150%",
@@ -122,7 +122,7 @@ export default function ZCoinInvestmentPlans() {
             Choose the Right Plan, Start Earning Today
           </h2>
           <p className="text-lg text-gray-400 max-w-4xl mx-auto leading-relaxed">
-            At Z-Coin, we offer flexible and profitable investment plans tailored to fit every kind of investor — from beginners to serious crypto earners. Whether you're just starting out or scaling up, there's a Z-Coin plan built for you.
+            At Royal-Fx, we offer flexible and profitable investment plans tailored to fit every kind of investor — from beginners to serious crypto earners. Whether you're just starting out or scaling up, there's a Royal-Fx plan built for you.
           </p>
         </div>
 
@@ -225,7 +225,7 @@ export default function ZCoinInvestmentPlans() {
               Start Your Crypto Journey Today
             </h2>
             <p className="text-gray-300 text-lg mb-8 max-w-3xl mx-auto leading-relaxed">
-              <strong>Start your crypto journey with the plan that fits your vision.</strong> With Z-Coin, your investment works for you — every single day.
+              <strong>Start your crypto journey with the plan that fits your vision.</strong> With Royal-Fx, your investment works for you — every single day.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <button className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-4 px-8 rounded-lg transition-colors duration-200 shadow-lg hover:shadow-blue-500/25">

@@ -3,16 +3,16 @@ import { Plus, Minus, Mail } from "lucide-react";
 
 const faqs = [
   {
-    question: "What is Z-Coin?",
-    answer: "Z-Coin is a digital investment token powered by the CryptoZ Investment Plan, offering fixed monthly returns, secure blockchain-backed transactions, and multiple earning opportunities.",
+    question: "What is Royal-Fx?",
+    answer: "Royal-Fx is a digital investment token powered by the CryptoZ Investment Plan, offering fixed monthly returns, secure blockchain-backed transactions, and multiple earning opportunities.",
   },
   {
-    question: "How do I start investing in Z-Coin?",
-    answer: "Simply register on the platform, choose an investment plan (Starter to Platinum), deposit the required Z-Coin amount, and your plan will activate immediately.",
+    question: "How do I start investing in Royal-Fx?",
+    answer: "Simply register on the platform, choose an investment plan (Starter to Platinum), deposit the required Royal-Fx amount, and your plan will activate immediately.",
   },
   {
     question: "What is the minimum amount required to invest?",
-    answer: "You can start investing with as little as 100 Z-Coin under the Starter Plan, making it accessible for beginners.",
+    answer: "You can start investing with as little as 100 Royal-Fx under the Starter Plan, making it accessible for beginners.",
   },
   {
     question: "How much return will I earn?",
@@ -28,11 +28,11 @@ const faqs = [
   },
   {
     question: "How is my investment secured?",
-    answer: "Z-Coin uses advanced blockchain encryption, decentralized smart contracts, and secure wallet integrations to protect your funds and data.",
+    answer: "Royal-Fx uses advanced blockchain encryption, decentralized smart contracts, and secure wallet integrations to protect your funds and data.",
   },
   {
-    question: "Is Z-Coin suitable for beginners?",
-    answer: "Absolutely! Z-Coin is designed with a user-friendly interface and flexible entry points, making it ideal for both beginners and seasoned crypto investors.",
+    question: "Is Royal-Fx suitable for beginners?",
+    answer: "Absolutely! Royal-Fx is designed with a user-friendly interface and flexible entry points, making it ideal for both beginners and seasoned crypto investors.",
   },
   {
     question: "Are there any hidden charges or fees?",
@@ -53,7 +53,7 @@ const FAQSection = () => {
 
   const handleContactSupport = () => {
     const email = "zcoinworld7@gmail.com"; // Replace with your actual support email
-    const subject = "Z-Coin Support Request";
+    const subject = "Royal-Fx Support Request";
     const body = "Hello Support Team,\n\nI need assistance with:";
     
     const mailtoLink = `mailto:${email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;

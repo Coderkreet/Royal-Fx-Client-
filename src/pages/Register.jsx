@@ -2,154 +2,126 @@ import { useState, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { setLoading } from '../redux/slice/loadingSlice';
-import { registerWithWallet } from '../api/auth-api';
-import { saveToken } from '../utils/additonalFunc';
-import { AuthenticatedRoutes, AuthRoutes } from '../context/Routes';
 import Swal from 'sweetalert2';
-import { ethers } from 'ethers';
-import WalletOptionModal from '../Components/UI/WalletOptionModal';
+import { createUserApi, verifyRegisterOtp } from '../api/auth-api';
+import DualOtpVerificationPopup from '../Components/UI/DualOtpVerificationPopup';
 
 const Register = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const [showWalletModal, setShowWalletModal] = useState(false);
-  const walletAddRef = useRef(null);
-  const referralRef = useRef(null);
+  const [showOtpPopup, setShowOtpPopup] = useState(false);
+  const [userData, setUserData] = useState(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    mobile: '',
+    password: '',
+    confirmPassword: '',
+    referralCode: ''
+  });
 
-  const handleNavigate = () => {
-    navigate(AuthenticatedRoutes.DASHBOARD);
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prevState => ({
+      ...prevState,
+      [name]: value
+    }));
   };
 
-  const handleWalletRegister = async () => {
+  const handleSubmit = async (e) => {
+    e.preventDefault();
     try {
-      if (!window.ethereum) {
+      if (formData.password !== formData.confirmPassword) {
         Swal.fire({
           icon: 'error',
-          title: 'Web3 wallet not found',
-          text: 'Please install a Web3 wallet to continue',
+          title: 'Password Mismatch',
+          text: 'Password and Confirm Password do not match!',
         });
         return;
       }
 
+      setIsSubmitting(true);
       dispatch(setLoading(true));
-      const provider = new ethers.BrowserProvider(window.ethereum);
-      await provider.send('eth_requestAccounts', []);
-      const signer = await provider.getSigner();
-      const walletAddress = await signer.getAddress();
-      walletAddRef.current = walletAddress;
+      
+      const res = await createUserApi(formData);
+      console.log('Registration Response:', res);
 
-      await signer.signMessage('Sign this message to verify your wallet ownership');
-
-      const response = await registerWithWallet({
-        walletAddress: walletAddRef.current,
-        referral: referralRef.current?.value || '',
-      });
-
-      saveToken(response?.id, response?.token, 'user');
-
+      if (res?.success && res?.data) {
+        // Store user data and show OTP popup
+        setUserData({
+          name: res.data.name,
+          email: res.data.email,
+          mobile: res.data.mobile,
+          username: res.data.username
+        });
+        
+        // Show success message
       await Swal.fire({
         icon: 'success',
-        title: 'Registration Success',
-        text: 'You have registered successfully',
+          title: 'Registration Successful',
+          text: 'Please verify your email with OTP',
         timer: 2000,
       });
 
-      navigate(AuthenticatedRoutes.DASHBOARD);
-      window.location.reload();
+        // Show OTP popup
+        setShowOtpPopup(true);
+        console.log('OTP Popup should be visible now');
+        console.log('User Data:', res.data);
+      } else {
+        throw new Error(res?.message || 'Registration failed');
+      }
+      
     } catch (error) {
-      console.log(error);
+      console.error('Registration Error:', error);
       Swal.fire({
         icon: 'error',
         title: 'Registration Failed',
-        text: error?.response?.data?.message || 'Something went wrong!',
+        text: error?.response?.data?.message || error.message || 'Something went wrong!',
       });
     } finally {
       dispatch(setLoading(false));
+      setIsSubmitting(false);
     }
   };
 
-  // const WalletOptionModal = ({ connectWallet, hide }) => (
-  //   <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-md">
-  //     <div className="relative bg-gradient-to-br from-slate-900/95 to-slate-800/95 backdrop-blur-xl p-8 rounded-3xl border border-cyan-500/20 shadow-2xl w-full max-w-md mx-4 transform transition-all duration-300">
-  //       {/* Glow Effect */}
-  //       <div className="absolute -inset-1 bg-gradient-to-r from-cyan-500/20 via-blue-500/20 to-purple-500/20 rounded-3xl blur-xl"></div>
+  const handleOtpVerification = async (emailOtp) => {
+    try {
+      dispatch(setLoading(true));
+      console.log('Verifying OTP:', emailOtp);
+      const res = await verifyRegisterOtp(emailOtp);
+      console.log('OTP Verification Response:', res);
 
-  //       <div className="relative">
-  //         <div className="flex items-center justify-between mb-8">
-  //           <h3 className="text-2xl font-bold text-white">Connect to World</h3>
-  //           <div className="w-12 h-12 rounded-full bg-gradient-to-r from-cyan-400 to-blue-500 flex items-center justify-center">
-  //             <svg className="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24">
-  //               <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
-  //             </svg>
-  //           </div>
-  //         </div>
+      if (res?.success) {
+        await Swal.fire({
+          icon: 'success',
+          title: 'Verification Success',
+          text: 'Your account has been verified successfully',
+          timer: 2000,
+        });
 
-  //         <div className="space-y-4">
-  //           <button
-  //             onClick={() => connectWallet("metamask")}
-  //             className="group w-full flex items-center justify-between bg-gradient-to-r from-orange-500/10 to-orange-600/10 hover:from-orange-500/20 hover:to-orange-600/20 border border-orange-500/20 hover:border-orange-400/40 text-white font-medium py-4 px-6 rounded-2xl transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-orange-500/25"
-  //           >
-  //             <div className="flex items-center space-x-4">
-  //               <div className="w-10 h-10 rounded-xl bg-gradient-to-r from-orange-400 to-orange-600 flex items-center justify-center">
-  //                 <img src="https://img.icons8.com/color/48/metamask-logo.png" alt="MetaMask" className="w-6 h-6" />
-  //               </div>
-  //               <div className="text-left">
-  //                 <div className="font-semibold">MetaMask</div>
-  //                 <div className="text-xs text-gray-400">Global Web3 Wallet</div>
-  //               </div>
-  //             </div>
-  //             <svg className="w-5 h-5 text-orange-400 group-hover:translate-x-1 transition-transform" fill="currentColor" viewBox="0 0 20 20">
-  //               <path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd" />
-  //             </svg>
-  //           </button>
+        navigate('/login');
+      } else {
+        throw new Error(res?.message || 'Verification failed');
+      }
+    } catch (error) {
+      console.error('OTP Verification Error:', error);
+      Swal.fire({
+        icon: 'error',
+        title: 'Verification Failed',
+        text: error?.response?.data?.message || error.message || 'Something went wrong!',
+      });
+    } finally {
+      dispatch(setLoading(false));
+      setShowOtpPopup(false);
+    }
+  };
 
-  //           <button
-  //             onClick={() => connectWallet("safepal")}
-  //             className="group w-full flex items-center justify-between bg-gradient-to-r from-blue-500/10 to-blue-600/10 hover:from-blue-500/20 hover:to-blue-600/20 border border-blue-500/20 hover:border-blue-400/40 text-white font-medium py-4 px-6 rounded-2xl transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-blue-500/25"
-  //           >
-  //             <div className="flex items-center space-x-4">
-  //               <div className="w-10 h-10 rounded-xl bg-gradient-to-r from-blue-400 to-blue-600 flex items-center justify-center">
-  //                 <img src="/safepal.svg" alt="SafePal" className="w-6 h-6" />
-  //               </div>
-  //               <div className="text-left">
-  //                 <div className="font-semibold">SafePal</div>
-  //                 <div className="text-xs text-gray-400">Secure Digital Assets</div>
-  //               </div>
-  //             </div>
-  //             <svg className="w-5 h-5 text-blue-400 group-hover:translate-x-1 transition-transform" fill="currentColor" viewBox="0 0 20 20">
-  //               <path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd" />
-  //             </svg>
-  //           </button>
-
-  //           <button
-  //             onClick={() => connectWallet("trustwallet")}
-  //             className="group w-full flex items-center justify-between bg-gradient-to-r from-cyan-500/10 to-cyan-600/10 hover:from-cyan-500/20 hover:to-cyan-600/20 border border-cyan-500/20 hover:border-cyan-400/40 text-white font-medium py-4 px-6 rounded-2xl transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-cyan-500/25"
-  //           >
-  //             <div className="flex items-center space-x-4">
-  //               <div className="w-10 h-10 rounded-xl bg-gradient-to-r from-cyan-400 to-cyan-600 flex items-center justify-center">
-  //                 <img src="/trustwallet.svg" alt="Trust Wallet" className="w-6 h-6" />
-  //               </div>
-  //               <div className="text-left">
-  //                 <div className="font-semibold">Trust Wallet</div>
-  //                 <div className="text-xs text-gray-400">Trusted Worldwide</div>
-  //               </div>
-  //             </div>
-  //             <svg className="w-5 h-5 text-cyan-400 group-hover:translate-x-1 transition-transform" fill="currentColor" viewBox="0 0 20 20">
-  //               <path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd" />
-  //             </svg>
-  //           </button>
-  //         </div>
-
-  //         <button
-  //           onClick={hide}
-  //           className="w-full mt-6 bg-slate-700/50 hover:bg-slate-600/50 border border-slate-600/50 hover:border-slate-500/50 text-white font-medium py-3 px-4 rounded-2xl transition-all duration-300"
-  //         >
-  //           Cancel
-  //         </button>
-  //       </div>
-  //     </div>
-  //   </div>
-  // );
+  const handleCloseOtpPopup = () => {
+    console.log('Closing OTP popup');
+    setShowOtpPopup(false);
+    setUserData(null);
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 relative overflow-hidden">
@@ -170,16 +142,6 @@ const Register = () => {
         <div className="absolute top-20 left-20 w-32 h-32 bg-gradient-to-r from-cyan-400/20 to-blue-600/20 rounded-full blur-xl animate-pulse"></div>
         <div className="absolute top-40 right-32 w-24 h-24 bg-gradient-to-r from-purple-400/20 to-pink-600/20 rounded-full blur-xl animate-pulse delay-1000"></div>
         <div className="absolute bottom-40 left-32 w-40 h-40 bg-gradient-to-r from-green-400/20 to-cyan-600/20 rounded-full blur-xl animate-pulse delay-2000"></div>
-
-        {/* Globe representation */}
-        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 opacity-5">
-          <div className="w-full h-full rounded-full border-2 border-cyan-500/20 relative">
-            <div className="absolute top-1/2 left-0 right-0 h-px bg-cyan-500/20"></div>
-            <div className="absolute left-1/2 top-0 bottom-0 w-px bg-cyan-500/20"></div>
-            <div className="absolute top-1/4 left-0 right-0 h-px bg-cyan-500/10 transform rotate-12"></div>
-            <div className="absolute top-3/4 left-0 right-0 h-px bg-cyan-500/10 transform -rotate-12"></div>
-          </div>
-        </div>
       </div>
 
       {/* Main Content */}
@@ -206,7 +168,7 @@ const Register = () => {
                   </div>
                 </div>
                 <h1 className="text-3xl font-bold bg-gradient-to-r from-white via-cyan-100 to-blue-100 bg-clip-text text-transparent mb-2">
-                  Z-Coin
+                  Royal-Fx
                 </h1>
                 <p className="text-cyan-400 text-sm font-medium tracking-wide">GLOBAL BLOCKCHAIN PLATFORM</p>
               </div>
@@ -218,37 +180,118 @@ const Register = () => {
                 </p>
               </div>
 
-              {/* Connect Button */}
+              {/* Registration Form */}
+              <form onSubmit={handleSubmit} className="space-y-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label htmlFor="name" className="text-white text-sm">Full Name*</label>
+                    <input
+                      id="name"
+                      name="name"
+                      type="text"
+                      value={formData.name}
+                      onChange={handleChange}
+                      placeholder="Enter your full name"
+                      required
+                      className="w-full bg-slate-800/30 border border-slate-700/50 text-white font-medium py-3 px-4 rounded-2xl focus:outline-none focus:ring-2 focus:ring-cyan-500 transition-all duration-300"
+                    />
+                  </div>
+
+                  <div>
+                    <label htmlFor="email" className="text-white text-sm">Email Address*</label>
+                    <input
+                      id="email"
+                      name="email"
+                      type="email"
+                      value={formData.email}
+                      onChange={handleChange}
+                      placeholder="Enter your email"
+                      required
+                      className="w-full bg-slate-800/30 border border-slate-700/50 text-white font-medium py-3 px-4 rounded-2xl focus:outline-none focus:ring-2 focus:ring-cyan-500 transition-all duration-300"
+                    />
+                  </div>
+
+                  <div>
+                    <label htmlFor="mobile" className="text-white text-sm">Mobile Number*</label>
+                    <input
+                      id="mobile"
+                      name="mobile"
+                      type="tel"
+                      value={formData.mobile}
+                      onChange={handleChange}
+                      placeholder="Enter your mobile number"
+                      required
+                      className="w-full bg-slate-800/30 border border-slate-700/50 text-white font-medium py-3 px-4 rounded-2xl focus:outline-none focus:ring-2 focus:ring-cyan-500 transition-all duration-300"
+                    />
+                  </div>
+
+                  <div>
+                    <label htmlFor="password" className="text-white text-sm">Password*</label>
+                    <input
+                      id="password"
+                      name="password"
+                      type="password"
+                      value={formData.password}
+                      onChange={handleChange}
+                      placeholder="Create a password"
+                      required
+                      className="w-full bg-slate-800/30 border border-slate-700/50 text-white font-medium py-3 px-4 rounded-2xl focus:outline-none focus:ring-2 focus:ring-cyan-500 transition-all duration-300"
+                    />
+                  </div>
+
               <div>
-                <label htmlFor="referralCode" className="text-white text-sm">Referral Code*</label>
+                    <label htmlFor="confirmPassword" className="text-white text-sm">Confirm Password*</label>
+                    <input
+                      id="confirmPassword"
+                      name="confirmPassword"
+                      type="password"
+                      value={formData.confirmPassword}
+                      onChange={handleChange}
+                      placeholder="Confirm your password"
+                      required
+                      className="w-full bg-slate-800/30 border border-slate-700/50 text-white font-medium py-3 px-4 rounded-2xl focus:outline-none focus:ring-2 focus:ring-cyan-500 transition-all duration-300"
+                    />
+                  </div>
+
+                  <div className="md:col-span-2">
+                    <label htmlFor="referralCode" className="text-white text-sm">Referral Code</label>
                 <input
                   id="referralCode"
+                      name="referralCode"
                   type="text"
-                  ref={referralRef}
-                  placeholder="Referral Code*"
-                  className="w-full bg-slate-800/30 border border-slate-700/50 text-white font-medium py-3 px-4 rounded-2xl mb-4 focus:outline-none focus:ring-2 focus:ring-cyan-500 transition-all duration-300"
+                      value={formData.referralCode}
+                      onChange={handleChange}
+                      placeholder="Enter referral code (optional)"
+                      className="w-full bg-slate-800/30 border border-slate-700/50 text-white font-medium py-3 px-4 rounded-2xl focus:outline-none focus:ring-2 focus:ring-cyan-500 transition-all duration-300"
                 />
               </div>
-              <button
-                onClick={() => setShowWalletModal(true)}
-                className="group relative w-full bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white font-semibold py-4 px-6 rounded-2xl transition-all duration-300 transform hover:scale-105 hover:shadow-lg hover:shadow-cyan-500/25 mb-4"
-              >
-                <div className="flex items-center justify-center space-x-3">
-                  <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M21 7.28V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2v-2.28c.59-.35 1-.98 1-1.72V9c0-.74-.41-1.37-1-1.72zM20 9v6h-7V9h7zM5 19V5h14v2h-6c-1.1 0-2 .9-2 2v6c0 1.1.9 2 2 2h6v2H5z" />
-                    <circle cx="16" cy="12" r="1.5" />
-                  </svg>
-                  <span>Connect Wallet</span>
-                  <svg className="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="currentColor" viewBox="0 0 20 20">
-                    <path fillRule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clipRule="evenodd" />
-                  </svg>
                 </div>
+
+                <button
+                  type="submit"
+                  disabled={isSubmitting}
+                  className={`w-full bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white font-semibold py-4 px-6 rounded-2xl transition-all duration-300 transform hover:scale-105 hover:shadow-lg hover:shadow-cyan-500/25 ${
+                    isSubmitting ? 'opacity-50 cursor-not-allowed' : ''
+                  }`}
+                >
+                  {isSubmitting ? (
+                    <div className="flex items-center justify-center space-x-2">
+                      <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                      </svg>
+                      <span>Creating Account...</span>
+                    </div>
+                  ) : (
+                    'Create Account'
+                  )}
               </button>
+              </form>
 
               {/* Login Link */}
               <button
                 onClick={() => navigate('/login')}
-                className="w-full bg-slate-700/50 hover:bg-slate-600/50 border border-slate-600/50 hover:border-slate-500/50 text-white font-medium py-4 px-6 rounded-2xl transition-all duration-300 mb-6"
+                className="w-full mt-4 bg-slate-700/50 hover:bg-slate-600/50 border border-slate-600/50 hover:border-slate-500/50 text-white font-medium py-4 px-6 rounded-2xl transition-all duration-300"
               >
                 <div className="flex items-center justify-center space-x-2">
                   <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
@@ -259,7 +302,7 @@ const Register = () => {
               </button>
 
               {/* Footer */}
-              <div className="text-center space-y-3">
+              <div className="text-center space-y-3 mt-6">
                 <div className="flex items-center justify-center space-x-4 text-xs text-gray-500">
                   <span className="flex items-center space-x-1">
                     <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
@@ -283,10 +326,12 @@ const Register = () => {
         </div>
       </div>
 
-      {showWalletModal && (
-        <WalletOptionModal
-          connectWallet={handleWalletRegister}
-          hide={() => setShowWalletModal(false)}
+      {showOtpPopup && userData && (
+        <DualOtpVerificationPopup
+          show={showOtpPopup}
+          onHide={handleCloseOtpPopup}
+          payload={userData}
+          otpSubmitHandler={handleOtpVerification}
         />
       )}
     </div>

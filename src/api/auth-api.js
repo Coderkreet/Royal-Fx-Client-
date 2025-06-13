@@ -10,10 +10,10 @@ export async function loginUserApi(payload) {
   const response = await Axios.post(`${userApi}/login`, payload);
   return response?.data;
 }
-export async function loginUserWithUsername(payload) {
-  const response = await Axios.post(`${userApi}/login-with-username`, payload);
-  return response?.data;
-}
+// export async function loginUserWithUsername(payload) {
+//   const response = await Axios.post(`${userApi}/login-with-username`, payload);
+//   return response?.data;
+// }
 export async function sendForForgetWithUsername(payload) {
   const response = await Axios.post(`${userApi}/forget-password`, payload);
   return response?.data;
@@ -36,7 +36,7 @@ export async function sendRegisterOtp(payload) {
   return response?.data;
 }
 export async function verifyRegisterOtp(payload) {
-  const response = await Axios.post(`${userApi}/user-otp-verify`, payload);
+  const response = await Axios.post(`${userApi}/register-otp-verify`, payload);
   return response?.data;
 }
 

@@ -84,7 +84,7 @@ export default function NebuluxCoin() {
         Swal.fire({
           icon: "success",
           title: "Purchase Successful",
-          text: `You have successfully purchased ${amount} Z-Coin.`,
+          text: `You have successfully purchased ${amount} Royal-Fx.`,
           confirmButtonText: "OK",
           timer: 5000,
           showConfirmButton: true,
@@ -255,15 +255,6 @@ export default function NebuluxCoin() {
   return (
     <div className="min-h-screen bg-gray-900">
       <div className="p-6 max-w-7xl mx-auto text-white">
-        {/* Header */}
-        <div className="text-center mb-16">
-          <h1 className="text-4xl font-black mb-4 text-white">
-            <span className="text-4xl"> <img src={lOGO} width={100} height={100} alt="Z Coins Logo" /></span> Z Coins
-          </h1>
-          <p className="text-xl text-gray-300 font-light">
-            Explore the cosmos of cryptocurrency
-          </p>
-        </div>
 
         {/* Stats Overview */}
         {nebuluxData && (
@@ -297,9 +288,9 @@ export default function NebuluxCoin() {
           <div className="bg-gray-800 p-8 rounded-xl border border-gray-700">
             <div className="text-center mb-8">
               <h2 className="text-4xl font-bold mb-2 text-white">
-                💳 Purchase Coins
+              Deposit Plan
               </h2>
-              <p className="text-gray-300">Invest in the future of space currency</p>
+              <p className="text-gray-300"> Deposit in the future of space currency</p>
             </div>
 
             <div className="space-y-6">
@@ -320,11 +311,11 @@ export default function NebuluxCoin() {
                       placeholder="0.00"
                     />
                   </div>
-                  {amount && (
+                  {/* {amount && (
                     <div className="mt-2 text-base text-gray-400">
                       ≈ {(Number(amount) * (nebuluxData?.price || 1)).toFixed(2)} Z Coin
                     </div>
-                  )}
+                  )} */}
                 </div>
               </div>
 
@@ -461,7 +452,7 @@ export default function NebuluxCoin() {
                   <img src={MainContent.appLogo} alt="App Logo" className="w-full h-full object-contain" />
                 </div>
                 <USDTPaymentMain
-                  amount={amount * nebuluxData.price}
+                  amount={amount * nebuluxData?.price}
                   walletType={walletType}
                   onSuccess={handlePurchase}
                   onFailure={() => setShowPaymentModal(false)}

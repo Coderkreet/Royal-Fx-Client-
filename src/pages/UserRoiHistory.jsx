@@ -64,7 +64,7 @@ const UserRoiHistory = () => {
           </div>
           {/* Total Amount */}
           <div className="bg-blue-600/20 text-blue-300 px-4 py-2 rounded-lg border border-blue-500/20">
-            Total Amount: {totalAmount.toFixed(2)} Z-Coin
+            Total Amount: {totalAmount.toFixed(2)} Royal-Fx
           </div>
           {/* Rows per page */}
           <div className="flex items-center space-x-2">
@@ -142,7 +142,7 @@ const UserRoiHistory = () => {
                       </td>
                       <td className="px-6 py-4">
                         <span className="text-slate-200 font-medium">
-                          {item.amount?.toFixed(2)} Z-Coin
+                          {item.amount?.toFixed(2)} Royal-Fx
                         </span>
                       </td>
                       <td className="px-6 py-4">

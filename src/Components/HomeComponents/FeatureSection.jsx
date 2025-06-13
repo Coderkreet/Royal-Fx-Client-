@@ -71,7 +71,7 @@ export default function ZCoinKeyFeatures() {
       icon: Zap,
       title: "Instant Plan Activation",
       highlight: "Start earning immediately",
-      description: "Choose a plan, invest Z-Coins, and start earning immediately — no complicated setup or waiting.",
+      description: "Choose a plan, invest Royal-Fxs, and start earning immediately — no complicated setup or waiting.",
       color: "cyan",
       colorClasses: {
         bg: "bg-cyan-600 bg-opacity-20",
@@ -97,7 +97,7 @@ export default function ZCoinKeyFeatures() {
       icon: Globe,
       title: "Decentralized & User-Focused",
       highlight: "Trustless, transparent ecosystem",
-      description: "No middlemen, no hidden fees — Z-Coin operates on a trustless, transparent ecosystem designed for investors.",
+      description: "No middlemen, no hidden fees — Royal-Fx operates on a trustless, transparent ecosystem designed for investors.",
       color: "indigo",
       colorClasses: {
         bg: "bg-indigo-600 bg-opacity-20",
@@ -126,10 +126,10 @@ export default function ZCoinKeyFeatures() {
             <Star className="w-8 h-8 text-yellow-400" />
           </div>
           <h1 className="text-5xl font-bold mb-6 tracking-tight">
-            Key Features of <span className="text-blue-400">Z-Coin</span> Investment Plans
+            Key Features of <span className="text-blue-400">Royal-Fx</span> Investment Plans
           </h1>
           <p className="text-xl text-gray-300 max-w-4xl mx-auto leading-relaxed">
-            Z-Coin is not just an investment — it's a well-structured, reward-driven crypto opportunity tailored for every type of investor. Here's what makes Z-Coin plans stand out:
+            Royal-Fx is not just an investment — it's a well-structured, reward-driven crypto opportunity tailored for every type of investor. Here's what makes Royal-Fx plans stand out:
           </p>
         </div>
 
