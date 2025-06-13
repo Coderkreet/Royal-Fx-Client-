@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import { getOurPlans, purchaseProduct } from "../api/product-api";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { setLoading } from "../redux/slice/loadingSlice";
-import { Zap, DollarSign, TrendingUp, Clock, LockKeyholeOpen } from "lucide-react";
+import { Zap, DollarSign, TrendingUp, Clock, LockKeyholeOpen, Wallet } from "lucide-react";
 import Swal from "sweetalert2";
 import { getUserInfo } from "../api/user-api";
 import MinersPurchaseHistory from "../Components/MinersPurchaseHistory";
@@ -28,6 +28,7 @@ const PlanSkeleton = () => (
 
 const MiningProducts = ({ className }) => {
   const dispatch = useDispatch();
+  const userInfo = useSelector((state) => state.userInfo.userInfo);
   const [plans, setPlans] = useState([]);
   const [loading, setLoadingState] = useState(true);
   const [showPopup, setShowPopup] = useState(false);
@@ -162,40 +163,105 @@ const MiningProducts = ({ className }) => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl mx-auto">
           {loading
             ? Array.from({ length: 3 }).map((_, i) => <PlanSkeleton key={i} />)
-            : plans?.map((plan) => (
-              <div
-                key={plan._id}
-                className="group bg-slate-800/50 backdrop-blur-sm border border-slate-700/50 rounded-2xl overflow-hidden hover:border-blue-500/50 transition-all duration-300 hover:shadow-2xl hover:shadow-blue-500/10 hover:-translate-y-2"
-              >
-                <div className="p-6 space-y-4">
-                  <div>
-                    <h3 className="text-2xl font-bold text-center text-slate-200 mb-2 group-hover:text-blue-300 transition-colors">
-                      {plan.name}
-                    </h3>
-                  </div>
-
-                  <div className="space-y-3">
-                    <div className="flex items-center justify-between bg-slate-700/50 rounded-lg p-3">
-                      <div className="flex items-center space-x-2">
-                        <DollarSign size={16} className="text-green-400" />
-                        <span className="text-slate-300 text-sm">Total Investment</span>
+            : plans?.map((plan) => {
+                const isActivePlan = userInfo?.plan?.isActive && userInfo?.plan?.planId === plan._id;
+                
+                return (
+                  <div
+                    key={plan._id}
+                    className={`group bg-slate-800/50 backdrop-blur-sm border rounded-2xl overflow-hidden transition-all duration-300 ${
+                      isActivePlan 
+                        ? 'border-green-500/50 shadow-2xl shadow-green-500/10' 
+                        : userInfo?.plan?.isActive 
+                          ? 'border-slate-700/50 opacity-50 cursor-not-allowed'
+                          : 'border-slate-700/50 hover:border-blue-500/50 hover:shadow-2xl hover:shadow-blue-500/10 hover:-translate-y-2'
+                    }`}
+                  >
+                    <div className="p-6 space-y-4">
+                      <div>
+                        <h3 className="text-2xl font-bold text-center text-slate-200 mb-2 group-hover:text-blue-300 transition-colors">
+                          {plan.name}
+                        </h3>
+                        {isActivePlan && (
+                          <div className="flex items-center justify-center mb-2">
+                            <span className="bg-green-500/20 text-green-400 px-3 py-1 rounded-full text-sm font-medium border border-green-500/30">
+                              Active Plan
+                            </span>
+                          </div>
+                        )}
                       </div>
-                      <span className="text-green-400 font-semibold">
-                        {plan.totalInvestment} Royal-Fx
-                      </span>
+
+                      <div className="space-y-3">
+                        <div className="flex items-center justify-between bg-slate-700/50 rounded-lg p-3">
+                          <div className="flex items-center space-x-2">
+                            <DollarSign size={16} className="text-green-400" />
+                            <span className="text-slate-300 text-sm">Total Investment</span>
+                          </div>
+                          <span className="text-green-400 font-semibold">
+                            {plan.totalInvestment} USDT
+                          </span>
+                        </div>
+                      </div>
+
+                      {isActivePlan ? (
+                        <button
+                          className="w-full bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white font-semibold py-3 px-6 rounded-xl transition-all duration-200 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 focus:ring-offset-slate-800 flex items-center justify-center space-x-2"
+                          onClick={() => {
+                            Swal.fire({
+                              title: "Stop Active Plan?",
+                              text: "Are you sure you want to stop your active mining plan?",
+                              icon: "warning",
+                              showCancelButton: true,
+                              confirmButtonColor: "#d33",
+                              cancelButtonColor: "#3085d6",
+                              confirmButtonText: "Yes, stop it!",
+                              cancelButtonText: "Cancel"
+                            }).then((result) => {
+                              if (result.isConfirmed) {
+                                // Add your stop plan API call here
+                                Swal.fire(
+                                  "Stopped!",
+                                  "Your mining plan has been stopped.",
+                                  "success"
+                                );
+                              }
+                            });
+                          }}
+                        >
+                          <Zap size={18} />
+                          <span>Stop Plan</span>
+                        </button>
+                      ) : (
+                        <button
+                          className={`w-full font-semibold py-3 px-6 rounded-xl transition-all duration-200 transform focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-slate-800 flex items-center justify-center space-x-2 ${
+                            userInfo?.plan?.isActive
+                              ? 'bg-slate-600 text-slate-400 cursor-not-allowed'
+                              : 'bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white hover:scale-105 focus:ring-blue-500'
+                          }`}
+                          onClick={() => {
+                            if (!userInfo?.plan?.isActive) {
+                              handleSelectPlan(plan);
+                            } else {
+                              Swal.fire({
+                                title: "Plan Already Active",
+                                text: "You already have an active mining plan. Please stop your current plan before selecting a new one.",
+                                icon: "info",
+                                confirmButtonText: "Okay"
+                              });
+                            }
+                          }}
+                          disabled={userInfo?.plan?.isActive}
+                        >
+                          <Zap size={18} />
+                          <span>
+                            {userInfo?.plan?.isActive ? 'Plan Active' : 'Select Plan'}
+                          </span>
+                        </button>
+                      )}
                     </div>
                   </div>
-
-                  <button
-                    className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold py-3 px-6 rounded-xl transition-all duration-200 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-slate-800 flex items-center justify-center space-x-2"
-                    onClick={() => handleSelectPlan(plan)}
-                  >
-                    <Zap size={18} />
-                    <span>Select Plan</span>
-                  </button>
-                </div>
-              </div>
-            ))}
+                );
+              })}
         </div>
 
         {/* Empty State */}
@@ -219,6 +285,23 @@ const MiningProducts = ({ className }) => {
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-slate-800 rounded-2xl p-8 max-w-2xl w-full mx-4">
             <h2 className="text-2xl font-bold text-white mb-6">Complete Your Purchase</h2>
+            
+            {/* Topup Wallet Balance Display */}
+            <div className="mb-6 p-4 bg-slate-700/50 rounded-lg border border-slate-600/50">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-2">
+                  <Wallet className="w-5 h-5 text-blue-400" />
+                  <span className="text-slate-300 font-medium">Topup Wallet Balance</span>
+                </div>
+                <div className="text-right">
+                  <div className="text-lg font-bold text-blue-400">
+                    {Number(userInfo?.wallet?.topupWallet || 0).toFixed(2)} USDT
+                  </div>
+                  <div className="text-sm text-slate-400">Available for investment</div>
+                </div>
+              </div>
+            </div>
+
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
@@ -235,9 +318,15 @@ const MiningProducts = ({ className }) => {
                     min="100"
                     step="100"
                     placeholder="Enter amount (e.g., 100, 200, 300...)"
+                    max={userInfo?.wallet?.topupWallet || 0}
                   />
                   {investmentError && (
                     <p className="mt-1 text-sm text-red-400">{investmentError}</p>
+                  )}
+                  {Number(formData.investmentAmount) > (userInfo?.wallet?.topupWallet || 0) && (
+                    <p className="mt-1 text-sm text-red-400">
+                      Investment amount cannot exceed your topup wallet balance
+                    </p>
                   )}
                 </div>
                 <div>
@@ -344,7 +433,8 @@ const MiningProducts = ({ className }) => {
                     !formData.investmentAmount ||
                     investmentError ||
                     Number(formData.investmentAmount) % 100 !== 0 ||
-                    Number(formData.investmentAmount) < 100
+                    Number(formData.investmentAmount) < 100 ||
+                    Number(formData.investmentAmount) > (userInfo?.wallet?.topupWallet || 0)
                   }
                 >
                   Submit

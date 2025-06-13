@@ -54,6 +54,11 @@ export async function purchaseNebuluxCoin(payload) {
   return response?.data;
 }
 
+export async function transferToTopup(payload) {
+  const response = await Axios.post(`${userApi}/transfer-amount`, payload);
+  return response?.data;
+}
+
 export async function getUserTransactionHistory() {
   const response = await Axios.get(`${userApi}/transaction-history`);
   return response?.data;
@@ -73,3 +78,5 @@ export async function getUserRoi() {
   const response = await Axios.get(`${userApi}/get-roi-income-history`);
   return response?.data;
 }
+
+

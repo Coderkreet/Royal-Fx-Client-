@@ -30,7 +30,7 @@ const Sidebar = ({ isExpanded, setIsExpanded }) => {
     { icon: <Group size={20} />, text: "Referral", path: AuthenticatedRoutes.MY_TEAM },
     // { icon: <RotateCwSquareIcon size={20} />, text: "Rewards", path: AuthenticatedRoutes.REWARDS },
     // { icon: <Globe size={20} />, text: "Leaderboard", path: AuthenticatedRoutes.LEADERBOARD },
-    { icon: <Calendar size={20} />, text: "ROI History", path: AuthenticatedRoutes.ROI_HISTORY },
+    { icon: <Calendar size={20} />, text: "Profit History", path: AuthenticatedRoutes.ROI_HISTORY },
     { icon: <Wallet size={20} />, text: "Wallet", path: AuthenticatedRoutes.WALLET },
     { icon: <Settings size={20} />, text: "Settings", path: AuthenticatedRoutes.SETTINGS },
   ];

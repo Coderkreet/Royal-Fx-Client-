@@ -347,10 +347,10 @@ const ROiIncome = () => {
                         <div className="text-slate-500 mb-4">
                             <Activity size={48} className="mx-auto mb-4" />
                             <h3 className="text-xl font-semibold text-slate-300 mb-2">
-                                No ROI History Found
+                                No Profit History Found
                             </h3>
                             <p className="text-slate-500">
-                                {searchTerm ? 'No results match your search criteria.' : 'No ROI history available.'}
+                                {searchTerm ? 'No results match your search criteria.' : 'No Profit History available.'}
                             </p>
                         </div>
                     </div>

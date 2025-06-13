@@ -43,9 +43,9 @@ const UserRoiHistory = () => {
       {/* Header */}
       <div className="mb-8">
         <h2 className="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400 mb-2">
-          My ROI Income History
+          Profit History
         </h2>
-        <p className="text-slate-400">View all your ROI transactions</p>
+        <p className="text-slate-400">View all your Profit transactions</p>
       </div>
 
       {/* Controls */}
@@ -64,7 +64,7 @@ const UserRoiHistory = () => {
           </div>
           {/* Total Amount */}
           <div className="bg-blue-600/20 text-blue-300 px-4 py-2 rounded-lg border border-blue-500/20">
-            Total Amount: {totalAmount.toFixed(2)} Royal-Fx
+            Total Amount: {totalAmount.toFixed(2)} USDT
           </div>
           {/* Rows per page */}
           <div className="flex items-center space-x-2">
@@ -142,7 +142,7 @@ const UserRoiHistory = () => {
                       </td>
                       <td className="px-6 py-4">
                         <span className="text-slate-200 font-medium">
-                          {item.amount?.toFixed(2)} Royal-Fx
+                          {item.amount?.toFixed(2)} USDT
                         </span>
                       </td>
                       <td className="px-6 py-4">
@@ -231,10 +231,10 @@ const UserRoiHistory = () => {
             <div className="text-slate-500 mb-4">
               <Activity size={48} className="mx-auto mb-4" />
               <h3 className="text-xl font-semibold text-slate-300 mb-2">
-                No ROI History Found
+                No Profit History Found
               </h3>
               <p className="text-slate-500">
-                {searchTerm ? 'No results match your search criteria.' : 'No ROI history available.'}
+                {searchTerm ? 'No results match your search criteria.' : 'No Profit History available.'}
               </p>
             </div>
           </div>

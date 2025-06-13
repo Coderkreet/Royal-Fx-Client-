@@ -14,6 +14,7 @@ import { AuthenticatedRoutes } from '../context/Routes';
 import { useNavigate } from 'react-router-dom';
 
 export default function WalletPage() {
+  const userInfo = useSelector((state) => state.userInfo.userInfo);
   const dispatch = useDispatch();
   const navigate = useNavigate()
   const isLoading = useSelector((state) => state.loading.isLoading);
@@ -25,6 +26,7 @@ export default function WalletPage() {
     walletAddress: "",
     amount: "",
   });
+
   const [walletType, setWalletType] = useState(null);
   const [depositPayload, setDepositPayload] = useState(null);
   const [activeHistoryTab, setActiveHistoryTab] = useState('transactions');
@@ -489,25 +491,7 @@ export default function WalletPage() {
     <div className="bg-[#1f2937] rounded-xl text-white p-4 sm:p-6 min-h-screen">
       {/* Total Bitcoin Balance */}
       <div className="flex flex-col sm:flex-row justify-between items-start gap-4 sm:gap-0 mb-6 sm:mb-8">
-        <div>
-          <div className="flex items-center gap-2 text-gray-400 mb-2">
-            <span>Total Fund Added</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="bg-amber-500 rounded-full p-1">
-              <svg className="w-5 h-5 text-white" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                <path fill="currentColor" d="M23.38,14.35l-2-6.08a.5.5,0,0,0-.47-.35H17.48V6.5A2.47,2.47,0,0,0,15.65,4H14.77a2.38,2.38,0,0,0-2.51,2.5V7.92H10.63V6.5A2.47,2.47,0,0,0,8.8,4H7.92A2.38,2.38,0,0,0,5.41,6.5V7.92H3.06a.5.5,0,0,0-.47.35l-2,6.08a.5.5,0,0,0,.47.65H3.06v4.42a.5.5,0,0,0,.5.5H20.38a.5.5,0,0,0,.5-.5V15H22.9A.5.5,0,0,0,23.38,14.35ZM13.26,6.5c0-1.18.47-1.5,1.5-1.5h.88C17,5,17,6.19,17,6.5V7.92H13.26Zm-6.85,0c0-1.18.47-1.5,1.5-1.5h.88c1.38,0,1.38,1.19,1.38,1.5V7.92H6.41ZM19.89,19H4.06V15H19.89Zm1.57-5H2.49L4.06,9H19.89l1.57,5Z" />
-              </svg>
-            </div>
-            {isLoading ? (
-              amountSkeleton()
-            ) : (
-                <h1 className="text-2xl sm:text-3xl font-bold">
-                  {(user?.fund || 0).toFixed(2)} Z Token
-                </h1>
-            )}
-          </div>
-        </div>
+      
 
         <div className="flex flex-wrap gap-2 sm:gap-3 w-full sm:w-auto">
           {/* <button
@@ -532,48 +516,73 @@ export default function WalletPage() {
       </div>
 
       {/* Balance Cards */}
-      <div className="grid grid-cols-2 gap-4 mb-6 sm:mb-8">
-        {/* Available Balance Card */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6 sm:mb-8">
+        {/* Income Wallet Card */}
         <div className="bg-gray-900 rounded-lg p-4 sm:p-5 relative">
           <div className="flex justify-between items-center mb-3">
             <div className="flex items-center gap-2 text-gray-400">
-              <span className="text-sm sm:text-base">Current Income</span>
-              {/* <Info className="w-4 h-4" /> */}
+              <span className="text-sm sm:text-base">Income Wallet</span>
             </div>
           </div>
           {isLoading ? (
             amountSkeleton()
           ) : (
             <>
-                <div className="text-lg sm:text-xl font-bold mb-1">{Number(user?.account?.currentIncome).toFixed(2)} Royal-Fx</div>
+              <div className="text-lg sm:text-xl font-bold mb-1">
+                {Number(user?.wallet?.incomeWallet || 0).toFixed(2)} USDT
+              </div>
             </>
           )}
 
-          {/* Circular progress */}
+          {/* Wallet Icon */}
           <div className="absolute right-4 sm:right-5 top-1/2 transform -translate-y-1/2">
             <img width="96" height="96" src="https://img.icons8.com/fluency/96/card-wallet.png" alt="card-wallet" />
           </div>
         </div>
 
-
+        {/* Topup Wallet Card */}
         <div className="bg-gray-900 rounded-lg p-4 sm:p-5 relative">
           <div className="flex justify-between items-center mb-3">
             <div className="flex items-center gap-2 text-gray-400">
-              <span className="text-sm sm:text-base">USDT Balance</span>
-              {/* <Info className="w-4 h-4" /> */}
+              <span className="text-sm sm:text-base">Topup Wallet</span>
             </div>
           </div>
           {isLoading ? (
             amountSkeleton()
           ) : (
             <>
-              <div className="text-lg sm:text-xl font-bold mb-1">{user?.usdt} USDT</div>
+              <div className="text-lg sm:text-xl font-bold mb-1">
+                {Number(user?.wallet?.topupWallet || 0).toFixed(2)} USDT
+              </div>
             </>
           )}
 
-          {/* Circular progress */}
+          {/* Wallet Icon */}
           <div className="absolute right-4 sm:right-5 top-1/2 transform -translate-y-1/2">
-            <img width="96" height="96" src="https://img.icons8.com/color/96/tether--v1.png" alt="tether--v1" />
+            <img width="96" height="96" src="https://img.icons8.com/fluency/96/card-wallet.png" alt="card-wallet" />
+          </div>
+        </div>
+
+        {/* Deposit Wallet Card */}
+        <div className="bg-gray-900 rounded-lg p-4 sm:p-5 relative">
+          <div className="flex justify-between items-center mb-3">
+            <div className="flex items-center gap-2 text-gray-400">
+              <span className="text-sm sm:text-base">Deposit Wallet</span>
+            </div>
+          </div>
+          {isLoading ? (
+            amountSkeleton()
+          ) : (
+            <>
+              <div className="text-lg sm:text-xl font-bold mb-1">
+                {Number(user?.wallet?.depositWallet || 0).toFixed(2)} USDT
+              </div>
+            </>
+          )}
+
+          {/* Wallet Icon */}
+          <div className="absolute right-4 sm:right-5 top-1/2 transform -translate-y-1/2">
+            <img width="96" height="96" src="https://img.icons8.com/fluency/96/card-wallet.png" alt="card-wallet" />
           </div>
         </div>
       </div>

@@ -8,348 +8,154 @@ import {
   tokenOptionsWithIcon,
 } from "../utils/tokenOptions";
 import { toast } from "react-toastify";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { setLoading } from "../redux/slice/loadingSlice";
 import { getUserSwapingData, postswapConvertData } from "../api/token-api";
 import Swal from "sweetalert2";
 import ConversionDetail from "./ConversionDetail";
 import { NumberFormatCommas } from "../utils/FormatText";
-import { getNebuluxData } from "../api/user-api";
+import { getNebuluxData, getUserInfo, transferToTopup } from "../api/user-api";
 import zCoin from "../assets/icons/zCoin.png"; // Assuming you have a Royal-Fx image in your assets
 
-const SwapConversion = ({ swapHandler }) => {
+const WALLET_OPTIONS = [
+  { label: "DepositWallet Wallet", value: "depositWallet" },
+  { label: "IncomeWallet Wallet", value: "incomeWallet" },
+];
+
+const SwapConversion = () => {
   const dispatch = useDispatch();
-  const [showTokens, setShowTokens] = useState(false);
-  const [showConversionDetail, setShowConversionDetail] = useState({
-    show: false,
-    data: null,
-  });
-  const [userSwapingData, setuserSwapingData] = useState(null);
-  const [selectedToken, setSelectedToken] = useState(tokenOptionsWithIcon?.[0]);
-  const [tokenDetails, setTokenDetails] = useState({
-    name: "Tether USDT",
-    symbol: "USDT",
-    price: 1,
-    // image: zCoin, // Default image for Royal-Fx
-  });
-  const [swapPayload, setSwapPayload] = useState({
-    fromValue: 0,
-    toValue: 0,
-  });
+  const [user, setUser] = useState(null);
+  const [sourceWallet, setSourceWallet] = useState(WALLET_OPTIONS[0].value);
+  const [amount, setAmount] = useState(0);
 
-  const [nebuluxData, setNebuluxData] = useState(null);
-
-  const fetchZCoinData = async () => {
-    try {
-      const response = await getNebuluxData();
-      setNebuluxData(response?.data);
-    } catch (error) {
-      console.error("Error fetching Royal-Fx data:", error);
-      toast.error("Failed to fetch Royal-Fx data.");
-    }
-  };
-
+  // Fetch user data and wallet balances
   useEffect(() => {
-    fetchZCoinData();
+    const fetchUserData = async () => {
+      try {
+        const response = await getUserInfo();
+        setUser(response.data);
+        console.log("User data:", response.data);
+      } catch (error) {
+        console.error("Error fetching user data:", error);
+        toast.error("Failed to fetch user data");
+      }
+    };
+    
+    fetchUserData();
   }, []);
 
-  // useEffect(() => {
-  //   const fetchDetails = async () => {
-  //     const data = await fetchTokenDetails(selectedToken);
-  //     setTokenDetails(data);
-  //   };
-
-  //   if (selectedToken) {
-  //     fetchDetails();
-  //     const interval = setInterval(() => {
-  //       fetchDetails();
-  //     }, 3000);
-  //     return () => clearInterval(interval);
-  //   }
-  // }, [selectedToken]);
-
-  useEffect(() => {
-    if (swapPayload?.fromValue > 0) {
-      const calculateAmount = async () => {
-        const swapAmt = await calculateTokenInUsdtAmount(
-          tokenDetails?.price,
-          swapPayload?.fromValue,
-          tokenDetails?.name
-        );
-        if (swapAmt !== null) {
-          setSwapPayload((prevState) => ({
-            ...prevState,
-            toValue: swapAmt,
-          }));
-        }
-      };
-
-      calculateAmount();
-    } else {
-      setSwapPayload((prevState) => ({
-        ...prevState,
-        toValue: 0,
-      }));
+  // Get wallet balances from user data
+  const getWalletBalance = (walletType) => {
+    if (!user?.wallet) return 0;
+    
+    switch (walletType) {
+      case "depositWallet":
+        return user.wallet.depositWalletWallet || 0;
+      case "incomeWallet":
+        return user.wallet.incomeWallet || 0;
+      case "topup":
+        return user.wallet.topupWallet || 0;
+      default:
+        return 0;
     }
-  }, [swapPayload?.fromValue, tokenDetails?.price, tokenDetails?.name]);
-
-  const oneUsdtInTokenValue = () => {
-    const tokenVal = nebuluxData?.price;
-    const amount = 1 / tokenVal;
-    return `1 Royal-Fx = ${amount?.toFixed(2)} USDT`;
   };
 
-  const fetchUserSwapingData = async () => {
+  const handleTransfer = async () => {
+    if (!amount || isNaN(amount) || amount <= 0) {
+      toast.error("Please enter a valid amount.");
+      return;
+    }
+    
+    const sourceBalance = getWalletBalance(sourceWallet);
+    if (amount > sourceBalance) {
+      toast.error("Insufficient balance in selected wallet.");
+      return;
+    }
+    
     try {
       dispatch(setLoading(true));
-      const response = await getUserSwapingData();
-      setuserSwapingData(response?.data);
+      // Call your transfer API here
+      // await transferToTopup({ fromWallet: sourceWallet, toWallet: "topup", amount: Number(amount) });
+      // Call your transfer API here
+      await transferToTopup({ fromWallet: sourceWallet, toWallet: "topupWallet", amount: Number(amount) });
+      // console.log({ fromWallet: sourceWallet, toWallet: "topup", amount: Number(amount) })
+      // For now, just show success message
+      toast.success("Transfer successful!");
+      setAmount(0);
+      
+      // Refresh user data after transfer
+      const response = await getUserInfo();
+      setUser(response.data);
     } catch (error) {
-      console.log(error);
+      toast.error("Transfer failed.");
+      
     } finally {
       dispatch(setLoading(false));
     }
-  };
-
-  useEffect(() => {
-    fetchUserSwapingData();
-  }, []);
-
-  const swapConvertHandler = async () => {
-    if (swapPayload?.fromValue <= 0) {
-      return toast.error("Please enter a valid amount.");
-    }
-    try {
-      dispatch(setLoading(true));
-      await postswapConvertData({
-        to: {
-          value: swapPayload?.toValue,
-          token: "USDT",
-          currentPrice: tokenDetails?.price,
-        },
-        from: {
-          value: swapPayload?.fromValue,
-          token: "Royal-Fx",
-        },
-        initialValue: tokenDetails?.price,
-      });
-      fetchUserSwapingData();
-      setSwapPayload({
-        fromValue: 0,
-        toValue: 0,
-      });
-      setShowConversionDetail({
-        show: true,
-        data: {
-          to: {
-            value: swapPayload?.toValue,
-            token: tokenDetails?.symbol,
-            currentPrice: tokenDetails?.price,
-          },
-          from: {
-            value: swapPayload?.fromValue,
-            token: "Royal-Fx",
-          },
-          initialValue: tokenDetails?.price,
-          date: new Date().toLocaleString(),
-        },
-      });
-    } catch (error) {
-      console.log(error);
-      Swal.fire({
-        title: "Error!",
-        text: error?.response?.data?.message || "Swapping is UnSuccssfull!",
-        icon: "error",
-        timer: 3000,
-      });
-    } finally {
-      dispatch(setLoading(false));
-    }
-  };
-
-  const handleTokenSelect = (token) => {
-    setSelectedToken(token);
-    setShowTokens(false);
   };
 
   return (
-    <>
-      {showTokens && (
-        <ShowTokenModal
-          hide={() => setShowTokens(false)}
-          chooseOption={handleTokenSelect}
-          tokenOptions={tokenOptionsWithIcon}
-        />
-      )}
-      {showConversionDetail.show && (
-        <ConversionDetail
-          show={showConversionDetail?.show}
-          onHide={() => setShowConversionDetail({ show: false, data: null })}
-          data={showConversionDetail?.data}
-        />
-      )}
-      
-      <div className="w-full max-w-md mx-auto space-y-6">
-        {/* Swap Container */}
-        <div className="relative">
-          {/* From Section */}
-          <div className="bg-slate-800/40 backdrop-blur-sm rounded-2xl border border-slate-700/50 p-6 shadow-xl">
-            <div className="flex justify-between items-center mb-4">
-              <h3 className="text-lg font-semibold text-white">From</h3>
-              <div className="text-right">
-                <span className="text-sm text-slate-400">Available</span>
-                <div className="text-sm font-medium text-blue-400">
-                  <NumberFormatCommas decimalScale={2} value={userSwapingData?.currentIncome || 0} /> Royal-Fx
-                </div>
-              </div>
-            </div>
-            
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-3">
-                <div className="w-10 h-10 rounded-full bg-slate-700/50 flex items-center justify-center">
-                  <img
-                    src={zCoin}
-                    alt="Royal-Fx"
-                    className="w-10 h-10 rounded-full"
-                  />
-                </div>
-                <div>
-                  <div className="text-white font-medium">Royal-Fx</div>
-                  <div className="text-slate-400 text-sm">Z Token (Bep20)</div>
-                </div>
-              </div>
-              
-              <div className="flex-1 max-w-32">
-                <input
-                  type="text"
-                  className="w-full bg-transparent text-right text-white text-xl font-semibold placeholder-slate-500 border-none outline-none"
-                  placeholder="0.00"
-                  onChange={(e) => {
-                    const { value } = e.target;
-                    const availableAmt = userSwapingData?.total || 0;
-
-                    if (isNaN(value)) {
-                      toast.error("Please enter a valid amount.");
-                      return;
-                    }
-
-                    // if (parseFloat(value) > availableAmt) {
-                    //   toast.error(
-                    //     `You can't enter more than ${availableAmt} USDT.`
-                    //   );
-                    //   return;
-                    // }
-                    setSwapPayload({
-                      ...swapPayload,
-                      fromValue: value,
-                    });
-                  }}
-                  value={swapPayload?.fromValue}
-                />
-              </div>
-            </div>
-          </div>
-
-          {/* Swap Icon */}
-          <div className="flex justify-center my-4">
-            <button 
-              // onClick={swapHandler}
-              className="bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 p-3 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
-            >
-              <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4" />
-              </svg>
-            </button>
-          </div>
-
-          {/* To Section */}
-          <div className="bg-slate-800/40 backdrop-blur-sm rounded-2xl border border-slate-700/50 p-6 shadow-xl">
-            <div className="flex justify-between items-center mb-4">
-              <h3 className="text-lg font-semibold text-white">To</h3>
-            </div>
-            
-            {/* <div className="flex justify-between items-center mb-4">
-              <h3 className="text-lg font-semibold text-white">From</h3>
-              <div className="text-right">
-                <span className="text-sm text-slate-400">Available</span>
-                <div className="text-sm font-medium text-blue-400">
-                  <NumberFormatCommas decimalScale={6} value={userSwapingData?.total || 0} /> USDT
-                </div>
-              </div>
-            </div> */}
-
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-3">
-                <div className="w-10 h-10 rounded-full bg-slate-700/50 flex items-center justify-center">
-                  <img
-                    src="https://img.icons8.com/color/48/tether--v1.png"
-                    alt="USDT"
-                    className="w-8 h-8"
-                  />
-                </div>
-                <div>
-                  <div className="text-white font-medium">USDT</div>
-                  <div className="text-slate-400 text-sm">Tether USD</div>
-                </div>
-              </div>
-
-              <div className="flex-1 max-w-32">
-                <input
-                  type="text"
-                  className="w-full bg-transparent text-right text-white text-xl font-semibold placeholder-slate-500 border-none outline-none"
-                  placeholder="0.00"
-                  onChange={(e) => {
-                    const { value } = e.target;
-                    const availableAmt = userSwapingData?.total || 0;
-
-                    if (isNaN(value)) {
-                      toast.error("Please enter a valid amount.");
-                      return;
-                    }
-
-                    if (parseFloat(value) > availableAmt) {
-                      toast.error(
-                        `You can't enter more than ${availableAmt} USDT.`
-                      );
-                      return;
-                    }
-                    setSwapPayload({
-                      ...swapPayload,
-                      fromValue: value,
-                    });
-                  }}
-                  value={swapPayload?.fromValue}
-                />
-              </div>
+    <div className="w-full max-w-md mx-auto space-y-6">
+      {/* From Section */}
+      <div className="bg-slate-800/40 backdrop-blur-sm rounded-2xl border border-slate-700/50 p-6 shadow-xl">
+        <div className="flex justify-between items-center mb-4">
+          <h3 className="text-lg font-semibold text-white">From</h3>
+          <div className="text-right">
+            <span className="text-sm text-slate-400">Available</span>
+            <div className="text-sm font-medium text-blue-400">
+              {getWalletBalance(sourceWallet)} {sourceWallet === "depositWallet" ? "Deposit" : "Incoming"} Wallet
             </div>
           </div>
         </div>
-
-        {/* Conversion Rate */}
-        <div className="text-center">
-          <div className="inline-flex items-center bg-slate-800/30 backdrop-blur-sm rounded-lg px-4 py-2 border border-slate-700/50">
-            <svg className="w-4 h-4 text-blue-400 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
-            </svg>
-            <span className="text-slate-300 text-sm">{oneUsdtInTokenValue()}</span>
-          </div>
+        <div className="flex items-center space-x-3 mb-4">
+          <select
+            className="bg-slate-700/50 text-white rounded-lg px-3 py-2"
+            value={sourceWallet}
+            onChange={(e) => setSourceWallet(e.target.value)}
+          >
+            {WALLET_OPTIONS.map((opt) => (
+              <option key={opt.value} value={opt.value}>
+                {opt.label}
+              </option>
+            ))}
+          </select>
         </div>
-
-        {/* Swap Button */}
-        <button
-          onClick={swapConvertHandler}
-          className="w-full bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 text-white font-semibold py-4 px-6 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed"
-          disabled={!swapPayload?.fromValue || swapPayload?.fromValue <= 0}
-        >
-          <div className="flex items-center justify-center space-x-2">
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
-            </svg>
-            <span>Swap Tokens</span>
-          </div>
-        </button>
+        <input
+          type="number"
+          className="w-full bg-transparent text-right text-white text-xl font-semibold placeholder-slate-500 border-none outline-none"
+          placeholder="0.00"
+          value={amount}
+          onChange={(e) => setAmount(e.target.value)}
+          min="0"
+        />
       </div>
-    </>
+
+      {/* To Section */}
+      <div className="bg-slate-800/40 backdrop-blur-sm rounded-2xl border border-slate-700/50 p-6 shadow-xl">
+        <div className="flex justify-between items-center mb-4">
+          <h3 className="text-lg font-semibold text-white">To</h3>
+        </div>
+        <div className="flex items-center space-x-3 mb-4">
+          <div className="bg-slate-700/50 text-white rounded-lg px-3 py-2">
+            Topup Wallet
+          </div>
+        </div>
+        <div className="text-right text-blue-400 text-sm font-medium">
+          Available: {getWalletBalance("topup")} Topup Wallet
+        </div>
+      </div>
+
+      {/* Transfer Button */}
+      <button
+        onClick={handleTransfer}
+        className="w-full bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 text-white font-semibold py-4 px-6 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed"
+        disabled={!amount || amount <= 0 || amount > getWalletBalance(sourceWallet)}
+      >
+        <div className="flex items-center justify-center space-x-2">
+          <span>Transfer to Topup Wallet</span>
+        </div>
+      </button>
+    </div>
   );
 };
 
