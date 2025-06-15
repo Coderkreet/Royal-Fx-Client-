@@ -50,7 +50,7 @@ const SwapConversion = () => {
     
     switch (walletType) {
       case "depositWallet":
-        return user.wallet.depositWalletWallet || 0;
+        return user.wallet.depositWallet || 0;
       case "incomeWallet":
         return user.wallet.incomeWallet || 0;
       case "topup":

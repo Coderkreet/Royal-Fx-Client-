@@ -336,7 +336,7 @@ export default function NebuluxCoin() {
                 className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 px-8 rounded-lg transition-all duration-200 transform hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
                 onClick={() => checkValidPurchaseAmount()}
               >
-                🚀 Purchase Z Coins
+                🚀 Purchase
               </button>
             </div>
           </div>
@@ -346,7 +346,7 @@ export default function NebuluxCoin() {
         <section className="mb-16">
           <div className="flex items-center justify-between mb-8">
             <h2 className="text-3xl font-bold text-white">
-              📈 Purchase History
+              📈 Deposit History
             </h2>
             <button
               onClick={fetchAllData}
@@ -360,12 +360,6 @@ export default function NebuluxCoin() {
             <div className="flex items-center justify-center py-12">
               <div className="animate-spin rounded-full h-12 w-12 border-4 border-blue-500 border-t-transparent"></div>
               <span className="ml-4 text-gray-300">Loading purchase history...</span>
-            </div>
-          )}
-
-          {error && (
-            <div className="bg-red-500/10 border border-red-500 rounded-xl p-6 text-center">
-              <p className="text-red-400 font-medium">{error}</p>
             </div>
           )}
 
