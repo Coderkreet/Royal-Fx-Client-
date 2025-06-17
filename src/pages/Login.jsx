@@ -10,6 +10,7 @@ import { loginUserApi } from '../api/auth-api';
 const Login = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
     email: '',
     password: ''
@@ -27,6 +28,7 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
+      setIsLoading(true);
       dispatch(setLoading(true));
       // Add your login API call here
       const response = await loginUserApi({
@@ -53,6 +55,7 @@ const Login = () => {
         text: error?.response?.data.message || error.message,
       });
     } finally {
+      setIsLoading(false);
       dispatch(setLoading(false));
     }
   };
@@ -69,7 +72,7 @@ const Login = () => {
                 <h1 className="text-3xl font-bold bg-gradient-to-r from-white via-cyan-100 to-blue-100 bg-clip-text text-transparent mb-2">
                   Royal-Fx
                 </h1>
-                <p className="text-cyan-400 text-sm font-medium tracking-wide">GLOBAL BLOCKCHAIN PLATFORM</p>
+                <p className="text-cyan-400 text-sm font-medium tracking-wide">GLOBAL INVESTMENT PLATFORM</p>
               </div>
 
               <form onSubmit={handleSubmit} className="space-y-6">
@@ -107,9 +110,12 @@ const Login = () => {
 
                 <button
                   type="submit"
-                  className="w-full bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white font-semibold py-4 px-6 rounded-2xl transition-all duration-300 transform hover:scale-105 hover:shadow-lg hover:shadow-cyan-500/25"
+                  disabled={isLoading}
+                  className={`w-full bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white font-semibold py-4 px-6 rounded-2xl transition-all duration-300 transform hover:scale-105 hover:shadow-lg hover:shadow-cyan-500/25 ${
+                    isLoading ? 'opacity-50 cursor-not-allowed' : ''
+                  }`}
                 >
-                  Sign In
+                  {isLoading ? 'Signing In...' : 'Sign In'}
                 </button>
               </form>
 

@@ -16,12 +16,13 @@ const DirectTeamLists = () => {
   
   const isLoading = useSelector((state) => state.loading.isLoading);
   
+  
   const fetchHistory = async () => {
     try {
       dispatch(setLoading(true));
       const response = await getDirectUsers();
-      setHistory(response?.data || []);
-      setFilteredData(response?.data || []);
+      setHistory(response?.data?.partners || []);
+      setFilteredData(response?.data?.partners || []);
     } catch (error) {
       console.log(error);
       setHistory([]);
@@ -44,14 +45,14 @@ const DirectTeamLists = () => {
       filtered = filtered.filter(user => 
         user.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
         user.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        user.userId?.toString().includes(searchTerm)
+        user.username?.toLowerCase().includes(searchTerm.toLowerCase())
       );
     }
 
     // Apply status filter
     if (statusFilter !== "all") {
       filtered = filtered.filter(user => 
-        statusFilter === "active" ? user.isActive : !user.isActive
+        statusFilter === "active" ? user.activationdetails?.isActive : !user.activationdetails?.isActive
       );
     }
 
@@ -135,7 +136,7 @@ const DirectTeamLists = () => {
             <div>
               <p className="text-sm text-gray-300">Active Users</p>
               <p className="text-2xl font-semibold text-green-400">
-                {history.filter(user => user.isActive).length}
+                {history.filter(user => user.activationdetails?.isActive).length}
               </p>
             </div>
             <div className="w-8 h-8 bg-green-900 rounded-full flex items-center justify-center">
@@ -148,7 +149,7 @@ const DirectTeamLists = () => {
             <div>
               <p className="text-sm text-gray-300">Inactive Users</p>
               <p className="text-2xl font-semibold text-red-400">
-                {history.filter(user => !user.isActive).length}
+                {history.filter(user => !user.activationdetails?.isActive).length}
               </p>
             </div>
             <div className="w-8 h-8 bg-red-900 rounded-full flex items-center justify-center">
@@ -209,16 +210,16 @@ const DirectTeamLists = () => {
                   S.No
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
-                  User ID
+                  Username
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
                   Name
                 </th>
-                {/* <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
-                  Email
-                </th> */}
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
                   Status
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
+                  Investment
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
                   Join Date
@@ -234,13 +235,13 @@ const DirectTeamLists = () => {
                 </tr>
               ) : (
                 currentData.map((user, index) => (
-                  <tr key={user.userId || index} className="hover:bg-[#232b3b]">
+                  <tr key={user._id || index} className="hover:bg-[#232b3b]">
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-white">
                       {startIndex + index + 1}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <span className="text-sm font-mono text-white bg-[#232b3b] px-2 py-1 rounded">
-                        {user.userId}
+                        {user.username}
                       </span>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
@@ -250,23 +251,24 @@ const DirectTeamLists = () => {
                         </div>
                         <div className="ml-3">
                           <span className="text-sm font-medium text-white">{user.name}</span>
+                          <p className="text-xs text-gray-400">{user.email}</p>
                         </div>
                       </div>
                     </td>
-                    {/* <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">
-                      {maskEmailAddress(user?.email)}
-                    </td> */}
                     <td className="px-6 py-4 whitespace-nowrap">
                       <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
-                        user.isActive 
+                        user.activationdetails?.isActive 
                           ? 'bg-green-900 text-green-300' 
                           : 'bg-red-900 text-red-300'
                       }`}>
-                        {user.isActive ? 'Active' : 'Inactive'}
+                        {user.activationdetails?.isActive ? 'Active' : 'Inactive'}
                       </span>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">
-                      {new Date(user?.createdAt).toUTCString() || 'N/A'}
+                      ${user.account?.totalInvestment || 0}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">
+                      {new Date(user?.createdAt).toLocaleDateString() || 'N/A'}
                     </td>
                   </tr>
                 ))

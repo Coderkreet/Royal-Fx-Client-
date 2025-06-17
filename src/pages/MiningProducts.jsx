@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
-import { getOurPlans, purchaseProduct } from "../api/product-api";
+import { getOurPlans, purchaseProduct, stopStrategy } from "../api/product-api";
 import { useDispatch, useSelector } from "react-redux";
 import { setLoading } from "../redux/slice/loadingSlice";
+import { setUserInfo } from "../redux/slice/userSlice";
 import { Zap, DollarSign, TrendingUp, Clock, LockKeyholeOpen, Wallet } from "lucide-react";
 import Swal from "sweetalert2";
 import { getUserInfo } from "../api/user-api";
@@ -98,7 +99,6 @@ const MiningProducts = ({ className }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     
-    // Validate investment amount before submission
     if (Number(formData.investmentAmount) % 100 !== 0) {
       Swal.fire({
         title: "Invalid Amount",
@@ -110,8 +110,20 @@ const MiningProducts = ({ className }) => {
     }
 
     try {
+      dispatch(setLoading(true));
       const response = await purchaseProduct(formData);
       if (response.message == "Trading account created successfully") {
+        // Update user info after successful purchase
+        const userResponse = await getUserInfo();
+        if (userResponse.data && userResponse.data.userProfile) {
+          dispatch(setUserInfo({
+            ...userResponse.data.userProfile,
+            wallet: userResponse.data.userProfile.wallet,
+            plan: userResponse.data.userProfile.plan,
+            account: userResponse.data.userProfile.account
+          }));
+        }
+
         Swal.fire({
           title: "Success!",
           text: "Your plan has been purchased successfully.",
@@ -132,9 +144,11 @@ const MiningProducts = ({ className }) => {
           investmentAmount: ''
         });
         setInvestmentError('');
+        
+        // Refresh plans after purchase
+        fetchPlans();
       }
     } catch (error) {
-      // Handle error response properly
       const errorMessage = error?.response?.data?.message || error?.message || "An error occurred while processing your request. Please try again.";
       
       Swal.fire({
@@ -143,6 +157,63 @@ const MiningProducts = ({ className }) => {
         icon: "error",
         confirmButtonText: "Okay",
       });
+    } finally {
+      dispatch(setLoading(false));
+    }
+  };
+
+  const handleStopPlan = async () => {
+    try {
+      const result = await Swal.fire({
+        title: "Stop Active Plan?",
+        text: "Are you sure you want to stop your active mining plan?",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#d33",
+        cancelButtonColor: "#3085d6",
+        confirmButtonText: "Yes, stop it!",
+        cancelButtonText: "Cancel"
+      });
+
+      if (result.isConfirmed) {
+        dispatch(setLoading(true));
+        const response = await stopStrategy();
+        
+        if (response.message == "Strategy stopped and amounts refunded to topup wallet.") {
+          // Update user info after successful stop
+          const userResponse = await getUserInfo();
+          if (userResponse.data && userResponse.data.userProfile) {
+            dispatch(setUserInfo({
+              ...userResponse.data.userProfile,
+              wallet: userResponse.data.userProfile.wallet,
+              plan: userResponse.data.userProfile.plan,
+              account: userResponse.data.userProfile.account
+            }));
+          }
+
+          Swal.fire({
+            title: "Success!",
+            text: response.message || "Your mining plan has been stopped successfully.",
+            icon: "success",
+            confirmButtonText: "Great!"
+          });
+          
+          // Refresh plans after stopping
+          fetchPlans();
+        } else {
+          throw new Error(response.message || "Failed to stop mining plan");
+        }
+      }
+    } catch (error) {
+      console.error("Error stopping plan:", error);
+      Swal.fire({
+        title: "Error!",
+        text: error?.response?.data?.message || error?.message || "Failed to stop mining plan. Please try again.",
+        icon: "error",
+        confirmButtonText: "Okay"
+      });
+    } finally {
+      dispatch(setLoading(false));
     }
   };
 
@@ -206,27 +277,7 @@ const MiningProducts = ({ className }) => {
                       {isActivePlan ? (
                         <button
                           className="w-full bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white font-semibold py-3 px-6 rounded-xl transition-all duration-200 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 focus:ring-offset-slate-800 flex items-center justify-center space-x-2"
-                          onClick={() => {
-                            Swal.fire({
-                              title: "Stop Active Plan?",
-                              text: "Are you sure you want to stop your active mining plan?",
-                              icon: "warning",
-                              showCancelButton: true,
-                              confirmButtonColor: "#d33",
-                              cancelButtonColor: "#3085d6",
-                              confirmButtonText: "Yes, stop it!",
-                              cancelButtonText: "Cancel"
-                            }).then((result) => {
-                              if (result.isConfirmed) {
-                                // Add your stop plan API call here
-                                Swal.fire(
-                                  "Stopped!",
-                                  "Your mining plan has been stopped.",
-                                  "success"
-                                );
-                              }
-                            });
-                          }}
+                          onClick={handleStopPlan}
                         >
                           <Zap size={18} />
                           <span>Stop Plan</span>
@@ -439,6 +490,7 @@ const MiningProducts = ({ className }) => {
                 >
                   Submit
                 </button>
+                
               </div>
             </form>
           </div>

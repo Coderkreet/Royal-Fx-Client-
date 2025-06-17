@@ -18,8 +18,8 @@ import { getNebuluxData, getUserInfo, transferToTopup } from "../api/user-api";
 import zCoin from "../assets/icons/zCoin.png"; // Assuming you have a Royal-Fx image in your assets
 
 const WALLET_OPTIONS = [
-  { label: "DepositWallet Wallet", value: "depositWallet" },
-  { label: "IncomeWallet Wallet", value: "incomeWallet" },
+  { label: "Deposit Wallet", value: "depositWallet" },
+  { label: "Income Wallet", value: "incomeWallet" },
 ];
 
 const SwapConversion = () => {
@@ -33,8 +33,8 @@ const SwapConversion = () => {
     const fetchUserData = async () => {
       try {
         const response = await getUserInfo();
-        setUser(response.data);
-        console.log("User data:", response.data);
+        setUser(response.data.userProfile);
+        console.log("User data:", response.data.userProfile);
       } catch (error) {
         console.error("Error fetching user data:", error);
         toast.error("Failed to fetch user data");
@@ -75,17 +75,15 @@ const SwapConversion = () => {
     try {
       dispatch(setLoading(true));
       // Call your transfer API here
-      // await transferToTopup({ fromWallet: sourceWallet, toWallet: "topup", amount: Number(amount) });
-      // Call your transfer API here
       await transferToTopup({ fromWallet: sourceWallet, toWallet: "topupWallet", amount: Number(amount) });
-      // console.log({ fromWallet: sourceWallet, toWallet: "topup", amount: Number(amount) })
+      
       // For now, just show success message
       toast.success("Transfer successful!");
       setAmount(0);
       
       // Refresh user data after transfer
       const response = await getUserInfo();
-      setUser(response.data);
+      setUser(response.data.userProfile);
     } catch (error) {
       toast.error("Transfer failed.");
       
@@ -103,7 +101,7 @@ const SwapConversion = () => {
           <div className="text-right">
             <span className="text-sm text-slate-400">Available</span>
             <div className="text-sm font-medium text-blue-400">
-              {getWalletBalance(sourceWallet)} {sourceWallet === "depositWallet" ? "Deposit" : "Incoming"} Wallet
+              {getWalletBalance(sourceWallet)} {sourceWallet === "depositWallet" ? "Deposit" : "Income"} Wallet
             </div>
           </div>
         </div>

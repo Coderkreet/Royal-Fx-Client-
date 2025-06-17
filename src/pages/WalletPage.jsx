@@ -66,7 +66,7 @@ export default function WalletPage() {
     try {
       setLoading(true);
       const res = await getUserInfo();
-      setUser(res.data);
+      setUser(res.data.userProfile);
       // console.log("User Info:", user, res.data);
     } catch (error) {
       console.error("Error fetching user info:", error);
@@ -206,11 +206,13 @@ export default function WalletPage() {
       },
     }).then((result) => {
       if (result.isConfirmed) {
-        if (result.value > user?.usdt) {
+        // Check against the correct wallet balance
+        const availableBalance = user?.wallet?.incomeWallet || 0;
+        if (result.value > availableBalance) {
           Swal.fire({
             icon: "error",
             title: "Insufficient Balance",
-            text: "You do not have enough USDT balance to withdraw this amount.",
+            text: "You do not have enough balance in your Income Wallet to withdraw this amount.",
           });
           return;
         }
@@ -531,6 +533,9 @@ export default function WalletPage() {
               <div className="text-lg sm:text-xl font-bold mb-1">
                 {Number(user?.wallet?.incomeWallet || 0).toFixed(2)} USDT
               </div>
+              <div className="text-sm text-gray-400">
+                Total Earnings: {Number(user?.account?.totalEarning || 0).toFixed(2)} USDT
+              </div>
             </>
           )}
 
@@ -553,6 +558,9 @@ export default function WalletPage() {
             <>
               <div className="text-lg sm:text-xl font-bold mb-1">
                 {Number(user?.wallet?.topupWallet || 0).toFixed(2)} USDT
+              </div>
+              <div className="text-sm text-gray-400">
+                Active Plan: {user?.plan?.isActive ? "Active" : "Inactive"}
               </div>
             </>
           )}
@@ -577,6 +585,9 @@ export default function WalletPage() {
               <div className="text-lg sm:text-xl font-bold mb-1">
                 {Number(user?.wallet?.depositWallet || 0).toFixed(2)} USDT
               </div>
+              <div className="text-sm text-gray-400">
+                Total Investment: {Number(user?.account?.totalInvestment || 0).toFixed(2)} USDT
+              </div>
             </>
           )}
 
@@ -584,6 +595,51 @@ export default function WalletPage() {
           <div className="absolute right-4 sm:right-5 top-1/2 transform -translate-y-1/2">
             <img width="96" height="96" src="https://img.icons8.com/fluency/96/card-wallet.png" alt="card-wallet" />
           </div>
+        </div>
+      </div>
+
+      {/* Additional Stats Cards */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6 sm:mb-8">
+        {/* Referral Earnings Card */}
+        <div className="bg-gray-900 rounded-lg p-4 sm:p-5">
+          <div className="flex justify-between items-center mb-3">
+            <div className="flex items-center gap-2 text-gray-400">
+              <span className="text-sm sm:text-base">Referral Earnings</span>
+            </div>
+          </div>
+          {isLoading ? (
+            amountSkeleton()
+          ) : (
+            <>
+              <div className="text-lg sm:text-xl font-bold mb-1">
+                {Number(user?.account?.totalReferralEarning || 0).toFixed(2)} USDT
+              </div>
+              <div className="text-sm text-gray-400">
+                Total Referrals: {user?.partners?.length || 0}
+              </div>
+            </>
+          )}
+        </div>
+
+        {/* Total Withdrawals Card */}
+        <div className="bg-gray-900 rounded-lg p-4 sm:p-5">
+          <div className="flex justify-between items-center mb-3">
+            <div className="flex items-center gap-2 text-gray-400">
+              <span className="text-sm sm:text-base">Total Withdrawals</span>
+            </div>
+          </div>
+          {isLoading ? (
+            amountSkeleton()
+          ) : (
+            <>
+              <div className="text-lg sm:text-xl font-bold mb-1">
+                {Number(user?.account?.totalWithdrawal || 0).toFixed(2)} USDT
+              </div>
+              <div className="text-sm text-gray-400">
+                Current Income: {Number(user?.account?.currentIncome || 0).toFixed(2)} USDT
+              </div>
+            </>
+          )}
         </div>
       </div>
 

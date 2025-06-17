@@ -102,7 +102,8 @@ const SkeletonLoader = () => {
 
 const Dashboard = () => {
   const dispatch = useDispatch();
-  const [user, setUser] = useState([])
+  const [user, setUser] = useState({})
+  const [dashboardStats, setDashboardStats] = useState({})
   const [marketData, setMarketData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [copied, setCopied] = useState(false);
@@ -160,9 +161,10 @@ const Dashboard = () => {
     try {
       setLoading(true);
       const res = await getUserInfo();
-      setUser(res);
+      setUser(res.data.userProfile);
+      setDashboardStats(res.data.dashboardStats);
       // Save all user data in redux
-      dispatch(setUserInfo(res.data));
+      dispatch(setUserInfo(res.data.userProfile));
     } catch (error) {
       console.error("Error fetching user info:", error);
       Swal.fire({
@@ -199,7 +201,7 @@ const Dashboard = () => {
 
   const copyReferralCode = async () => {
     try {
-      await navigator.clipboard.writeText(user?.data?.username || '');
+      await navigator.clipboard.writeText(user?.username || '');
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     } catch (err) {
@@ -212,8 +214,8 @@ const Dashboard = () => {
       try {
         await navigator.share({
           title: 'Join me on CryptoMiner',
-          text: `Use my referral code: ${user?.data?.username}`,
-          url: window.location.origin + '/refer-and-earn/register?referral=' + user?.data?.username,
+          text: `Use my referral code: ${user?.username}`,
+          url: window.location.origin + '/refer-and-earn/register?referral=' + user?.username,
         });
       } catch (err) {
         console.log('Error sharing:', err);
@@ -241,9 +243,9 @@ const Dashboard = () => {
           <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
             <div>
               <h1 className="text-3xl lg:text-4xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
-                Welcome back, {user?.data?.name}! 👋
+                Welcome back, {user?.name}! 👋
               </h1>
-              <p className="text-gray-400 mt-2">Ready to mine some crypto today?</p>
+              <p className="text-gray-400 mt-2">Ready to some investment today?</p>
             </div>
             <button 
               onClick={handleStartMining}
@@ -265,7 +267,7 @@ const Dashboard = () => {
                 <TrendingUp className="w-8 h-8 text-green-400" />
               </div>
               <div className="text-3xl font-bold text-green-400 mb-2">
-                ${Number(user?.data?.account?.totalEarning || 0).toFixed(2)}
+                ${Number(dashboardStats?.totalEarning || 0).toFixed(2)}
               </div>
               <div className="text-sm text-gray-400">Total Earned</div>
             </div>
@@ -276,7 +278,7 @@ const Dashboard = () => {
                 <Award className="w-8 h-8 text-blue-400" />
               </div>
               <div className="text-3xl font-bold text-blue-400 mb-2">
-                {user?.data?.account?.totalInvestment || 0}
+                {dashboardStats?.totalInvestment || 0}
               </div>
               <div className="text-sm text-gray-400">Total Investment</div>
             </div>
@@ -287,7 +289,7 @@ const Dashboard = () => {
                 <Star className="w-8 h-8 text-yellow-400" />
               </div>
               <div className="text-3xl font-bold text-yellow-400 mb-2">
-                {user?.data?.account?.activeStrategies || 0}
+                {dashboardStats?.activeStrategy || 0}
               </div>
               <div className="text-sm text-gray-400">Active Strategies</div>
             </div>
@@ -298,7 +300,7 @@ const Dashboard = () => {
                 <TrendingDown className="w-8 h-8 text-red-400" />
               </div>
               <div className="text-3xl font-bold text-red-400 mb-2">
-                ${Number(user?.data?.account?.totalWithdrawal || 0).toFixed(2)}
+                ${Number(dashboardStats?.totalWithdrawal || 0).toFixed(2)}
               </div>
               <div className="text-sm text-gray-400">Total Withdrawal</div>
             </div>
@@ -324,7 +326,7 @@ const Dashboard = () => {
               <div className="text-sm text-gray-400 mb-3">Your Referral Code</div>
               <div className="flex items-center gap-3">
                 <div className="flex-1 bg-gray-800/50 rounded-xl px-4 py-3 font-mono text-blue-400 text-lg border border-gray-600/30">
-                  {user?.data?.username || 'LOADING...'}
+                  {user?.username || 'LOADING...'}
                 </div>
                 <button
                   onClick={copyReferralCode}
@@ -343,7 +345,7 @@ const Dashboard = () => {
 
             <div className="grid grid-cols-1 gap-4 text-center">
               <div className="bg-black/30 rounded-2xl p-6 border border-gray-700/50">
-                <div className="text-3xl font-bold text-purple-400 mb-2">${user?.data?.account?.totalReferralEarning || 0}</div>
+                <div className="text-3xl font-bold text-purple-400 mb-2">${user?.account?.totalReferralEarning || 0}</div>
                 <div className="text-sm text-gray-400">Total Referral Earnings</div>
               </div>
             </div>

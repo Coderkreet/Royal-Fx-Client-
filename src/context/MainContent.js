@@ -4,7 +4,7 @@ import appFavicon from "../assets/app/Hello.png";
 import { getCurrentUser } from "../utils/additonalFunc";
 import axios from "axios";
 export const MainContent = {
-  appName: "Zcoin",
+  appName: "Royal Fx",
   appLogo: appLogoTrans,
   appLogoTrans: appLogoTrans,
   appFavicon: appFavicon,

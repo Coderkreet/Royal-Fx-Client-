@@ -170,7 +170,7 @@ const Register = () => {
                 <h1 className="text-3xl font-bold bg-gradient-to-r from-white via-cyan-100 to-blue-100 bg-clip-text text-transparent mb-2">
                   Royal-Fx
                 </h1>
-                <p className="text-cyan-400 text-sm font-medium tracking-wide">GLOBAL BLOCKCHAIN PLATFORM</p>
+                <p className="text-cyan-400 text-sm font-medium tracking-wide">GLOBAL INVESTMENT PLATFORM</p>
               </div>
 
               <div className="mb-8">

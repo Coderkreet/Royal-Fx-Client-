@@ -28,3 +28,7 @@ export async function changeStatusTOUnlock(payload) {
     return response?.data;
   }
 
+  export async function stopStrategy(payload) {
+    const response = await Axios.post(`${userApi}/stop-strategy`, payload);
+    return response?.data;
+  }
