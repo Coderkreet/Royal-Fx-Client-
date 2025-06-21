@@ -16,7 +16,7 @@ const InactiveUserHistory = () => {
         const response = await getAllUserList();
         if (response?.data) {
           // Filter only inactive users
-          const inactiveUsers = response.data.filter(user => !user.isActive);
+          const inactiveUsers = response.data.filter(user => !user.isFirstPurchase);
           setUsers(inactiveUsers);
         }
       } catch (err) {

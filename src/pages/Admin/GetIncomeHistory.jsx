@@ -33,21 +33,21 @@ const GetIncomeHistory = () => {
 
   // Filter and sort data
   const filteredAndSortedData = incomeHistory.filter(item => 
-    item?.user?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    item?.fromUser?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    item?.receiver?.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    item?.fromUser?.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
     item?.type?.toLowerCase().includes(searchTerm.toLowerCase())
   ).sort((a, b) => {
     if (!sortField) return 0;
 
     let aValue, bValue;
     switch (sortField) {
-      case 'user':
-        aValue = a.user || '';
-        bValue = b.user || '';
+      case 'receiver':
+        aValue = a.receiver?.name || '';
+        bValue = b.receiver?.name || '';
         break;
       case 'fromUser':
-        aValue = a.fromUser || '';
-        bValue = b.fromUser || '';
+        aValue = a.fromUser?.name || '';
+        bValue = b.fromUser?.name || '';
         break;
       case 'amount':
         aValue = a.amount || 0;
@@ -98,7 +98,7 @@ const GetIncomeHistory = () => {
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400" size={20} />
             <input
               type="text"
-              placeholder="Search by user ID, from user ID, or type..."
+              placeholder="Search by receiver name, from user name, or type..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="w-full pl-10 pr-4 py-3 bg-slate-700 border border-slate-600 rounded-xl text-slate-200 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
@@ -134,10 +134,18 @@ const GetIncomeHistory = () => {
                 <thead className="bg-slate-700/50">
                   <tr>
                     <th className="px-6 py-4 text-left">
-                      <div className="flex items-center space-x-2">
+                      <button
+                        onClick={() => handleSort('receiver')}
+                        className="flex items-center space-x-2 hover:text-blue-400 transition-colors"
+                      >
                         <Users size={16} className="text-slate-400" />
-                        <span className="text-slate-300 font-semibold text-sm">User ID</span>
-                      </div>
+                        <span className="text-slate-300 font-semibold text-sm">Receiver</span>
+                        {sortField === 'receiver' && (
+                          <span className="text-blue-400">
+                            {sortOrder === 'asc' ? '↑' : '↓'}
+                          </span>
+                        )}
+                      </button>
                     </th>
                     <th className="px-6 py-4 text-left">
                       <button
@@ -187,12 +195,6 @@ const GetIncomeHistory = () => {
                         )}
                       </button>
                     </th>
-                    <th className="px-6 py-4 text-left">
-                      <div className="flex items-center space-x-2">
-                        <Activity size={16} className="text-slate-400" />
-                        <span className="text-slate-300 font-semibold text-sm">Level</span>
-                      </div>
-                    </th>
                   </tr>
                 </thead>
                 <tbody>
@@ -202,14 +204,24 @@ const GetIncomeHistory = () => {
                       className="border-t border-slate-700 hover:bg-slate-700/30 transition-colors"
                     >
                       <td className="px-6 py-4">
-                        <span className="text-slate-200 font-medium">
-                          {item.user}
-                        </span>
+                        <div>
+                          <span className="text-slate-200 font-medium">
+                            {item.receiver?.name || 'N/A'}
+                          </span>
+                          <div className="text-slate-400 text-xs">
+                            ID: {item.receiver?._id || 'N/A'}
+                          </div>
+                        </div>
                       </td>
                       <td className="px-6 py-4">
-                        <span className="text-slate-200 font-medium">
-                          {item.fromUser}
-                        </span>
+                        <div>
+                          <span className="text-slate-200 font-medium">
+                            {item.fromUser?.name || 'N/A'}
+                          </span>
+                          <div className="text-slate-400 text-xs">
+                            ID: {item.fromUser?._id || 'N/A'}
+                          </div>
+                        </div>
                       </td>
                       <td className="px-6 py-4">
                         <span className="text-slate-200 font-medium">
@@ -228,11 +240,6 @@ const GetIncomeHistory = () => {
                         <div className="text-slate-400 text-xs">
                           {new Date(item.date).toLocaleTimeString()}
                         </div>
-                      </td>
-                      <td className="px-6 py-4">
-                        <span className="text-slate-200 font-medium">
-                          Level {item.level}
-                        </span>
                       </td>
                     </tr>
                   ))}

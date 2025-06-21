@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react'
 import { getRoiHistory } from '../../api/admin-api'
-import { Search, ChevronLeft, ChevronRight, Users, DollarSign, Calendar, Activity, CoinsIcon } from 'lucide-react'
+import { Search, ChevronLeft, ChevronRight, Users, DollarSign, Calendar, Activity, Wallet, ArrowRight } from 'lucide-react'
 import { useDispatch } from 'react-redux'
 import { setLoading } from '../../redux/slice/loadingSlice'
 
 const ROiIncome = () => {
     const dispatch = useDispatch();
-    const [roiData, setRoiData] = useState([]);
+    const [transactionData, setTransactionData] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
     const [rowsPerPage, setRowsPerPage] = useState(10);
     const [searchTerm, setSearchTerm] = useState('');
@@ -14,26 +14,28 @@ const ROiIncome = () => {
     const [sortOrder, setSortOrder] = useState('asc');
 
     useEffect(() => {
-        fetchRoiHistory();
+        fetchTransactionHistory();
     }, []);
 
-    const fetchRoiHistory = async () => {
+    const fetchTransactionHistory = async () => {
         try {
             dispatch(setLoading(true));
             const response = await getRoiHistory();
             if (response.success) {
-                setRoiData(response.data);
+                setTransactionData(response.data);
             }
         } catch (error) {
-            console.error('Error fetching ROI data:', error);
+            console.error('Error fetching transaction data:', error);
         } finally {
             dispatch(setLoading(false));
         }
     };
 
     // Filter and sort data
-    const filteredAndSortedData = roiData.filter(item => 
-        item?.user?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    const filteredAndSortedData = transactionData.filter(item => 
+        item?.userId?.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        item?.type?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        item?.status?.toLowerCase().includes(searchTerm.toLowerCase()) ||
         item?.amount?.toString().includes(searchTerm)
     ).sort((a, b) => {
         if (!sortField) return 0;
@@ -41,16 +43,24 @@ const ROiIncome = () => {
         let aValue, bValue;
         switch (sortField) {
             case 'user':
-                aValue = a.user || '';
-                bValue = b.user || '';
+                aValue = a.userId?.name || '';
+                bValue = b.userId?.name || '';
                 break;
             case 'amount':
                 aValue = a.amount || 0;
                 bValue = b.amount || 0;
                 break;
+            case 'type':
+                aValue = a.type || '';
+                bValue = b.type || '';
+                break;
+            case 'status':
+                aValue = a.status || '';
+                bValue = b.status || '';
+                break;
             case 'date':
-                aValue = new Date(a.date || 0);
-                bValue = new Date(b.date || 0);
+                aValue = new Date(a.createdAt || 0);
+                bValue = new Date(b.createdAt || 0);
                 break;
             default:
                 return 0;
@@ -76,16 +86,44 @@ const ROiIncome = () => {
     };
 
     // Calculate total amount
-    const totalAmount = roiData.reduce((sum, item) => sum + item.amount, 0);
+    const totalAmount = transactionData.reduce((sum, item) => sum + item.amount, 0);
+
+    // Get status color
+    const getStatusColor = (status) => {
+        switch (status?.toLowerCase()) {
+            case 'completed':
+                return 'bg-green-600/20 text-green-300';
+            case 'pending':
+                return 'bg-yellow-600/20 text-yellow-300';
+            case 'failed':
+                return 'bg-red-600/20 text-red-300';
+            default:
+                return 'bg-gray-600/20 text-gray-300';
+        }
+    };
+
+    // Get type color
+    const getTypeColor = (type) => {
+        switch (type?.toLowerCase()) {
+            case 'topup':
+                return 'bg-blue-600/20 text-blue-300';
+            case 'withdrawal':
+                return 'bg-purple-600/20 text-purple-300';
+            case 'transfer':
+                return 'bg-orange-600/20 text-orange-300';
+            default:
+                return 'bg-gray-600/20 text-gray-300';
+        }
+    };
 
   return (
         <div className="bg-gradient-to-br from-slate-900 via-slate-800 to-blue-900 min-h-screen p-6">
             {/* Header */}
             <div className="mb-8">
                 <h2 className="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400 mb-2">
-                    ROI Income History
+                    Transaction History
                 </h2>
-                <p className="text-slate-400">View all ROI transactions across users</p>
+                <p className="text-slate-400">View all user transactions across the platform</p>
             </div>
 
             {/* Controls */}
@@ -96,7 +134,7 @@ const ROiIncome = () => {
                         <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400" size={20} />
                         <input
                             type="text"
-                            placeholder="Search by user ID or amount..."
+                            placeholder="Search by user name, type, status, or amount..."
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
                             className="w-full pl-10 pr-4 py-3 bg-slate-700 border border-slate-600 rounded-xl text-slate-200 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
@@ -105,7 +143,7 @@ const ROiIncome = () => {
 
                     {/* Total Amount */}
                     <div className="bg-blue-600/20 text-blue-300 px-4 py-2 rounded-lg border border-blue-500/20">
-                        Total Amount: {totalAmount.toFixed(2)} Royal-Fx
+                        Total Amount: ${totalAmount.toFixed(2)}
                     </div>
 
                     {/* Rows per page */}
@@ -142,8 +180,22 @@ const ROiIncome = () => {
                                                 className="flex items-center space-x-2 hover:text-blue-400 transition-colors"
                                             >
                                                 <Users size={16} className="text-slate-400" />
-                                                <span className="text-slate-300 font-semibold text-sm">User ID</span>
+                                                <span className="text-slate-300 font-semibold text-sm">User</span>
                                                 {sortField === 'user' && (
+                                                    <span className="text-blue-400">
+                                                        {sortOrder === 'asc' ? '↑' : '↓'}
+                                                    </span>
+                                                )}
+                                            </button>
+                                        </th>
+                                        <th className="px-6 py-4 text-left">
+                                            <button
+                                                onClick={() => handleSort('type')}
+                                                className="flex items-center space-x-2 hover:text-blue-400 transition-colors"
+                                            >
+                                                <Activity size={16} className="text-slate-400" />
+                                                <span className="text-slate-300 font-semibold text-sm">Type</span>
+                                                {sortField === 'type' && (
                                                     <span className="text-blue-400">
                                                         {sortOrder === 'asc' ? '↑' : '↓'}
                                                     </span>
@@ -155,9 +207,29 @@ const ROiIncome = () => {
                                                 onClick={() => handleSort('amount')}
                                                 className="flex items-center space-x-2 hover:text-blue-400 transition-colors"
                                             >
-                                                <CoinsIcon size={16} className="text-slate-400" />
+                                                <DollarSign size={16} className="text-slate-400" />
                                                 <span className="text-slate-300 font-semibold text-sm">Amount</span>
                                                 {sortField === 'amount' && (
+                                                    <span className="text-blue-400">
+                                                        {sortOrder === 'asc' ? '↑' : '↓'}
+                                                    </span>
+                                                )}
+                                            </button>
+                                        </th>
+                                        <th className="px-6 py-4 text-left">
+                                            <div className="flex items-center space-x-2">
+                                                <Wallet size={16} className="text-slate-400" />
+                                                <span className="text-slate-300 font-semibold text-sm">From → To</span>
+                                            </div>
+                                        </th>
+                                        <th className="px-6 py-4 text-left">
+                                            <button
+                                                onClick={() => handleSort('status')}
+                                                className="flex items-center space-x-2 hover:text-blue-400 transition-colors"
+                                            >
+                                                <Activity size={16} className="text-slate-400" />
+                                                <span className="text-slate-300 font-semibold text-sm">Status</span>
+                                                {sortField === 'status' && (
                                                     <span className="text-blue-400">
                                                         {sortOrder === 'asc' ? '↑' : '↓'}
                                                     </span>
@@ -178,12 +250,6 @@ const ROiIncome = () => {
                                                 )}
                                             </button>
                                         </th>
-                                        <th className="px-6 py-4 text-left">
-                                            <div className="flex items-center space-x-2">
-                                                <Activity size={16} className="text-slate-400" />
-                                                <span className="text-slate-300 font-semibold text-sm">Created At</span>
-                                            </div>
-                                        </th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -193,22 +259,40 @@ const ROiIncome = () => {
                                             className="border-t border-slate-700 hover:bg-slate-700/30 transition-colors"
                                         >
                                             <td className="px-6 py-4">
-                                                <span className="text-slate-200 font-medium">
-                                                    {item.user}
-                                                </span>
-                                            </td>
-                                            <td className="px-6 py-4">
-                                                <span className="text-slate-200 font-medium">
-                                                    {item.amount.toFixed(2)} Royal-Fx
-                                                </span>
-                                            </td>
-                                            <td className="px-6 py-4">
-                                                <span className="text-slate-300 text-sm">
-                                                    {new Date(item.date).toLocaleDateString()}
-                                                </span>
-                                                <div className="text-slate-400 text-xs">
-                                                    {new Date(item.date).toLocaleTimeString()}
+                                                <div>
+                                                    <span className="text-slate-200 font-medium">
+                                                        {item.userId?.name || 'N/A'}
+                                                    </span>
+                                                    <div className="text-slate-400 text-xs">
+                                                        ID: {item.userId?._id || 'N/A'}
+                                                    </div>
                                                 </div>
+                                            </td>
+                                            <td className="px-6 py-4">
+                                                <span className={`px-3 py-1 rounded-full text-sm font-medium ${getTypeColor(item.type)}`}>
+                                                    {item.type}
+                                                </span>
+                                            </td>
+                                            <td className="px-6 py-4">
+                                                <span className="text-slate-200 font-medium">
+                                                    ${item.amount}
+                                                </span>
+                                            </td>
+                                            <td className="px-6 py-4">
+                                                <div className="flex items-center space-x-2">
+                                                    <span className="text-slate-300 text-sm capitalize">
+                                                        {item.fromWallet}
+                                                    </span>
+                                                    <ArrowRight size={12} className="text-slate-400" />
+                                                    <span className="text-slate-300 text-sm capitalize">
+                                                        {item.toWallet}
+                                                    </span>
+                                                </div>
+                                            </td>
+                                            <td className="px-6 py-4">
+                                                <span className={`px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(item.status)}`}>
+                                                    {item.status}
+                                                </span>
                                             </td>
                                             <td className="px-6 py-4">
                                                 <span className="text-slate-300 text-sm">
@@ -347,10 +431,10 @@ const ROiIncome = () => {
                         <div className="text-slate-500 mb-4">
                             <Activity size={48} className="mx-auto mb-4" />
                             <h3 className="text-xl font-semibold text-slate-300 mb-2">
-                                No Profit History Found
+                                No Transaction History Found
                             </h3>
                             <p className="text-slate-500">
-                                {searchTerm ? 'No results match your search criteria.' : 'No Profit History available.'}
+                                {searchTerm ? 'No results match your search criteria.' : 'No transaction history available.'}
                             </p>
                         </div>
                     </div>

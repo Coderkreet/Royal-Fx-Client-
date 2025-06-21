@@ -60,14 +60,14 @@ const OurPlans = ({ className }) => {
       <div className="px-6 py-8">
         <div className="text-center mb-12">
           <h1 className="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400 mb-4">
-            Our Plans
+            Subscriptions
           </h1>
           <p className="text-slate-400 text-lg max-w-2xl mx-auto">
-            Choose from our premium mining plans and start earning cryptocurrency today
+            Choose a subscription strategy that fits your needs. Our plans are designed to help you maximize your investments with minimal effort.
           </p>
         </div>
 
-        {/* Plans Grid */}
+        {/* Subscriptions Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl mx-auto">
           {loading
             ? Array.from({ length: 3 }).map((_, i) => <PlanSkeleton key={i} />)
@@ -82,7 +82,7 @@ const OurPlans = ({ className }) => {
                       {plan.name}
                     </h3>
                     <p className="text-slate-400 text-sm leading-relaxed">
-                      Lock-in Period: {plan.lockin} months
+                      Brokerage Charge: <span className="text-blue-400 font-semibold">{plan.brokerageCharge} USDT</span>
                     </p>
                   </div>
 
@@ -91,41 +91,13 @@ const OurPlans = ({ className }) => {
                     <div className="flex items-center justify-between bg-slate-700/50 rounded-lg p-3">
                       <div className="flex items-center space-x-2">
                         <DollarSign size={16} className="text-green-400" />
-                        <span className="text-slate-300 text-sm">Investment</span>
+                        <span className="text-slate-300 text-sm">Total Investment</span>
                       </div>
                       <span className="text-green-400 font-semibold">
-                        {plan.price} USDT
-                      </span>
-                    </div>
-
-                    <div className="flex items-center justify-between bg-slate-700/50 rounded-lg p-3">
-                      <div className="flex items-center space-x-2">
-                        <TrendingUp size={16} className="text-blue-400" />
-                        <span className="text-slate-300 text-sm">Monthly ROI</span>
-                      </div>
-                      <span className="text-blue-400 font-semibold">
-                        {plan.monthlyROIpercentage}%
-                      </span>
-                    </div>
-
-                    <div className="flex items-center justify-between bg-slate-700/50 rounded-lg p-3">
-                      <div className="flex items-center space-x-2">
-                        <TrendingUp size={16} className="text-purple-400" />
-                        <span className="text-slate-300 text-sm">Total ROI</span>
-                      </div>
-                      <span className="text-purple-400 font-semibold">
-                        {plan.totalROIpercentage}%
+                        {plan.totalInvestment} USDT
                       </span>
                     </div>
                   </div>
-
-                  {/* Action Button */}
-                  {/* <button
-                    className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold py-3 px-6 rounded-xl transition-all duration-200 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-slate-800 flex items-center justify-center space-x-2"
-                  >
-                    <Zap size={18} />
-                    <span>Select Plan</span>
-                  </button> */}
                 </div>
               </div>
             ))}
@@ -137,10 +109,10 @@ const OurPlans = ({ className }) => {
             <div className="bg-slate-800/50 backdrop-blur-sm border border-slate-700 rounded-2xl p-12 max-w-md mx-auto">
               <Clock size={48} className="text-slate-500 mx-auto mb-4" />
               <h3 className="text-xl font-semibold text-slate-300 mb-2">
-                No Plans Available
+                No Subscriptions Available
               </h3>
               <p className="text-slate-500">
-                Mining plans will appear here when available.
+                Subscription strategies will appear here when available.
               </p>
             </div>
           </div>

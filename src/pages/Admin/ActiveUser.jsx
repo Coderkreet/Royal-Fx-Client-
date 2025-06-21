@@ -16,7 +16,7 @@ const ActiveUser = () => {
         const response = await getAllUserList();
         if (response?.data) {
           // Filter only active users
-          const activeUsers = response.data.filter(user => user.isActive);
+          const activeUsers = response.data.filter(user => user.isFirstPurchase);
           setUsers(activeUsers);
         }
       } catch (err) {
@@ -84,6 +84,8 @@ const ActiveUser = () => {
       </div>
     );
   }
+
+  const activeFirstPurchaseUsers = filteredUsers.filter(user => user.isFirstPurchase);
 
   return (
     <div className="space-y-6">
@@ -157,7 +159,7 @@ const ActiveUser = () => {
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-700">
-              {filteredUsers.map((user) => (
+              {activeFirstPurchaseUsers.map((user) => (
                 <tr key={user._id} className="hover:bg-gray-700/50 transition-colors">
                   <td className="px-6 py-4">
                     <div className="flex items-center space-x-3">
@@ -202,7 +204,7 @@ const ActiveUser = () => {
       </div>
 
       {/* No Results Message */}
-      {filteredUsers.length === 0 && (
+      {activeFirstPurchaseUsers.length === 0 && (
         <div className="text-center py-8 text-gray-400">
           No active users found matching your search criteria
         </div>

@@ -30,7 +30,8 @@ const PerchancePlanHistory = () => {
     try {
       dispatch(setLoading(true));
       const response = await getMinerPurchaseHistory();
-      if (response.message === "fetched") {
+      // Accept both 'fetched' and 'Data fetched successfully' as valid
+      if (response.message === "fetched" || response.message === "Data fetched successfully") {
         setPurchaseHistory(response.data);
       }
     } catch (error) {
@@ -42,38 +43,39 @@ const PerchancePlanHistory = () => {
 
   // Filter and sort data
   const filteredAndSortedData = useMemo(() => {
-    let filtered = purchaseHistory?.filter(item => 
-      item?.userId?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      item?.plan?.toLowerCase().includes(searchTerm.toLowerCase())
-    ) || [];
+    let filtered = purchaseHistory?.filter(item => {
+      // Search by user name, plan name, or investAmount
+      return (
+        item?.userId?.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        item?.plan?.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        String(item?.investAmount).includes(searchTerm)
+      );
+    }) || [];
 
     if (sortField) {
       filtered.sort((a, b) => {
         let aValue, bValue;
-        
         switch (sortField) {
           case 'userId':
-            aValue = a?.userId || '';
-            bValue = b?.userId || '';
+            aValue = a?.userId?.name || '';
+            bValue = b?.userId?.name || '';
             break;
           case 'plan':
-            aValue = a?.plan || '';
-            bValue = b?.plan || '';
+            aValue = a?.plan?.name || '';
+            bValue = b?.plan?.name || '';
             break;
-          case 'investmentDate':
-            aValue = new Date(a?.investmentDate || 0);
-            bValue = new Date(b?.investmentDate || 0);
+          case 'investAmount':
+            aValue = a?.investAmount || 0;
+            bValue = b?.investAmount || 0;
             break;
           default:
             return 0;
         }
-
         if (aValue < bValue) return sortOrder === 'asc' ? -1 : 1;
         if (aValue > bValue) return sortOrder === 'asc' ? 1 : -1;
         return 0;
       });
     }
-
     return filtered;
   }, [purchaseHistory, searchTerm, sortField, sortOrder]);
 
@@ -96,9 +98,9 @@ const PerchancePlanHistory = () => {
       {/* Header */}
       <div className="mb-8">
         <h2 className="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400 mb-2">
-          Purchase History
+          Subscription History
         </h2>
-        <p className="text-slate-400">View all mining plan purchases across users</p>
+        {/* <p className="text-slate-400">View all mining plan purchases across users</p> */}
       </div>
 
       {/* Controls */}
@@ -156,7 +158,7 @@ const PerchancePlanHistory = () => {
                         className="flex items-center space-x-2 hover:text-blue-400 transition-colors"
                       >
                         <User size={16} className="text-slate-400" />
-                        <span className="text-slate-300 font-semibold text-sm">User ID</span>
+                        <span className="text-slate-300 font-semibold text-sm">User Name</span>
                         {sortField === 'userId' && (
                           <span className="text-blue-400">
                             {sortOrder === 'asc' ? '↑' : '↓'}
@@ -169,7 +171,7 @@ const PerchancePlanHistory = () => {
                         onClick={() => handleSort('plan')}
                         className="flex items-center space-x-2 hover:text-blue-400 transition-colors"
                       >
-                        <span className="text-slate-300 font-semibold text-sm">Plan ID</span>
+                        <span className="text-slate-300 font-semibold text-sm">Subscription</span>
                         {sortField === 'plan' && (
                           <span className="text-blue-400">
                             {sortOrder === 'asc' ? '↑' : '↓'}
@@ -178,30 +180,7 @@ const PerchancePlanHistory = () => {
                       </button>
                     </th>
                     <th className="px-6 py-4 text-left">
-                      <div className="flex items-center space-x-2">
-                        <Activity size={16} className="text-slate-400" />
-                        <span className="text-slate-300 font-semibold text-sm">Status</span>
-                      </div>
-                    </th>
-                    <th className="px-6 py-4 text-left">
-                      <button
-                        onClick={() => handleSort('investmentDate')}
-                        className="flex items-center space-x-2 hover:text-blue-400 transition-colors"
-                      >
-                        <Calendar size={16} className="text-slate-400" />
-                        <span className="text-slate-300 font-semibold text-sm">Purchase Date</span>
-                        {sortField === 'investmentDate' && (
-                          <span className="text-blue-400">
-                            {sortOrder === 'asc' ? '↑' : '↓'}
-                          </span>
-                        )}
-                      </button>
-                    </th>
-                    <th className="px-6 py-4 text-left">
-                      <div className="flex items-center space-x-2">
-                        <Calendar size={16} className="text-slate-400" />
-                        <span className="text-slate-300 font-semibold text-sm">Lock-in Period</span>
-                      </div>
+                      <span className="text-slate-300 font-semibold text-sm">Invested Amount</span>
                     </th>
                   </tr>
                 </thead>
@@ -218,31 +197,17 @@ const PerchancePlanHistory = () => {
                       </td>
                       <td className="px-6 py-4">
                         <span className="text-slate-200 font-medium">
-                          {item.userId}
+                          {item.userId?.name}
                         </span>
                       </td>
                       <td className="px-6 py-4">
                         <span className="text-slate-200 font-medium">
-                          {item.plan}
+                          {item.plan?.name}
                         </span>
                       </td>
                       <td className="px-6 py-4">
-                        <span className={`px-3 py-1 rounded-full text-sm font-medium ${
-                          item.isLocked 
-                            ? 'bg-red-600/20 text-red-300'
-                            : 'bg-green-600/20 text-green-300'
-                        }`}>
-                          {item.isLocked ? 'Locked' : 'Unlocked'}
-                        </span>
-                      </td>
-                      <td className="px-6 py-4">
-                        <span className="text-slate-300 text-sm">
-                          {formatDateTime(item.investmentDate)}
-                        </span>
-                      </td>
-                      <td className="px-6 py-4">
-                        <span className="text-slate-300 text-sm">
-                          {formatDateTime(item.lockinPeriod)}
+                        <span className="text-green-400 font-semibold">
+                          {item.investAmount} USDT
                         </span>
                       </td>
                     </tr>

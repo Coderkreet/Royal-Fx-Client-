@@ -71,20 +71,20 @@ const SidebardAdmin = () => {
         // { label: 'Rejected', path: '/admin/withdrawals/rejected' }
       ]
     },
-    {
-      id: 'coin-data',
-      icon: <CoinsIcon size={20} />,
-      label: 'Coin Data',
-      path: AuthenticatedRoutes.COIN_INFO
-    },
+    // {
+    //   id: 'coin-data',
+    //   icon: <CoinsIcon size={20} />,
+    //   label: 'Coin Data',
+    //   path: AuthenticatedRoutes.COIN_INFO
+    // },
     {
       id: 'plans',
       icon: <Package size={20} />,
       label: 'Our Plans',
       path: '',
       submenu: [
-        { label: 'All Plans', path: AuthenticatedRoutes.OUR_PLANS },
-        { label: 'Purchase Plan History', path: AuthenticatedRoutes.PerchancePlanHistory },
+        { label: 'All Subscription', path: AuthenticatedRoutes.OUR_PLANS },
+        { label: 'Subscription History', path: AuthenticatedRoutes.PerchancePlanHistory },
       ]
     },
 
@@ -97,7 +97,7 @@ const SidebardAdmin = () => {
     {
       id: 'Roi-Income',
       icon: <DollarSign size={20} />,
-      label: 'ROI-Income History',
+      label: 'Transaction History',
       path: AuthenticatedRoutes.ROI_INCOME
     },
     // {

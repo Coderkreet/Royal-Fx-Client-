@@ -189,7 +189,7 @@ const AllUser = () => {
                   </td>
                   <td className="px-6 py-4">
                     <span className={`px-3 py-1 rounded-full text-sm ${
-                      user.isActive 
+                      user.isFirstPurchase 
                         ? 'bg-green-500/20 text-green-400' 
                         : 'bg-red-500/20 text-red-400'
                     }`}>

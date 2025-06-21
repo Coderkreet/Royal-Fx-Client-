@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { getDashboardData } from '../../api/admin-api';
-import { Users, UserCheck, UserX, Lock, Unlock, DollarSign, Wallet, TrendingUp, Coins, ArrowUpRight, ArrowDownRight } from 'lucide-react';
+import { Users, UserCheck, UserX, DollarSign, Wallet, TrendingUp, Coins, ArrowUpRight, ArrowDownRight, Briefcase, PieChart } from 'lucide-react';
 
 const StatCard = ({ title, value, icon: Icon, trend, trendValue, trendUp }) => {
   return (
@@ -84,7 +84,7 @@ const AdminDashboard = () => {
         />
         <StatCard
           title="Active Users"
-          value={dashboardData?.totalActiveUsers || 0}
+          value={dashboardData?.activeUsers || 0}
           icon={UserCheck}
           trend={true}
           trendValue="Currently Active"
@@ -92,66 +92,86 @@ const AdminDashboard = () => {
         />
         <StatCard
           title="Inactive Users"
-          value={dashboardData?.totalInactiveUsers || 0}
+          value={dashboardData?.inactiveUsers || 0}
           icon={UserX}
           trend={true}
           trendValue="Currently Inactive"
           trendUp={false}
         />
         <StatCard
-          title="Locked Plans"
-          value={dashboardData?.totalLockedMinersCount || 0}
-          icon={Lock}
-        />
-        <StatCard
-          title="Unlocked Plans"
-          value={dashboardData?.totalUnlockedMinersCount || 0}
-          icon={Unlock}
-        />
-        <StatCard
-          title="Total Funds"
-          value={`$${dashboardData?.totalFund || 0}`}
-          icon={DollarSign}
-        />
-        <StatCard
-          title="Total Withdrawals"
-          value={dashboardData?.totalWithdrawals || 0}
-          icon={Wallet}
-        />
-        <StatCard
-          title="Mining Investment"
-          value={`$${dashboardData?.totalMiningInvestment || 0}`}
+          title="Total Investment"
+          value={`$${dashboardData?.totalInvestment || 0}`}
           icon={TrendingUp}
         />
         <StatCard
-          title="Users Earnings"
-          value={`$${dashboardData?.totalUsersEarnings || 0}`}
+          title="Total Earning"
+          value={`$${dashboardData?.totalEarning || 0}`}
           icon={Coins}
+        />
+        <StatCard
+          title="Total Income"
+          value={`$${dashboardData?.totalIncome || 0}`}
+          icon={DollarSign}
+        />
+        <StatCard
+          title="Total Withdrawal"
+          value={`$${dashboardData?.totalWithdrawal || 0}`}
+          icon={Wallet}
+        />
+        <StatCard
+          title="Total Brokerage"
+          value={`$${dashboardData?.totalBrokerage || 0}`}
+          icon={Briefcase}
+        />
+        <StatCard
+          title="Total Plans"
+          value={dashboardData?.totalPlans || 0}
+          icon={PieChart}
         />
       </div>
 
       {/* Additional Stats Section */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="bg-gray-800 rounded-xl p-6 border border-gray-700">
-          <h3 className="text-lg font-semibold text-white mb-4">Withdrawal Statistics</h3>
+          <h3 className="text-lg font-semibold text-white mb-4">Financial Overview</h3>
           <div className="space-y-4">
             <div className="flex justify-between items-center">
-              <span className="text-gray-400">Total Withdrawal Count</span>
-              <span className="text-white font-semibold">{dashboardData?.totalWithdrawalCount || 0}</span>
+              <span className="text-gray-400">Total Investment</span>
+              <span className="text-white font-semibold">${dashboardData?.totalInvestment || 0}</span>
             </div>
             <div className="flex justify-between items-center">
-              <span className="text-gray-400">Total Withdrawal Amount</span>
-              <span className="text-white font-semibold">${dashboardData?.totalWithdrawals || 0}</span>
+              <span className="text-gray-400">Total Earning</span>
+              <span className="text-white font-semibold">${dashboardData?.totalEarning || 0}</span>
+            </div>
+            <div className="flex justify-between items-center">
+              <span className="text-gray-400">Total Income</span>
+              <span className="text-white font-semibold">${dashboardData?.totalIncome || 0}</span>
+            </div>
+            <div className="flex justify-between items-center">
+              <span className="text-gray-400">Total Brokerage</span>
+              <span className="text-white font-semibold">${dashboardData?.totalBrokerage || 0}</span>
             </div>
           </div>
         </div>
 
         <div className="bg-gray-800 rounded-xl p-6 border border-gray-700">
-          <h3 className="text-lg font-semibold text-white mb-4">Referral Statistics</h3>
+          <h3 className="text-lg font-semibold text-white mb-4">User Statistics</h3>
           <div className="space-y-4">
             <div className="flex justify-between items-center">
-              <span className="text-gray-400">Total Referral Income</span>
-              <span className="text-white font-semibold">${dashboardData?.totalReferralIncome || 0}</span>
+              <span className="text-gray-400">Total Users</span>
+              <span className="text-white font-semibold">{dashboardData?.totalUsers || 0}</span>
+            </div>
+            <div className="flex justify-between items-center">
+              <span className="text-gray-400">Active Users</span>
+              <span className="text-white font-semibold">{dashboardData?.activeUsers || 0}</span>
+            </div>
+            <div className="flex justify-between items-center">
+              <span className="text-gray-400">Inactive Users</span>
+              <span className="text-white font-semibold">{dashboardData?.inactiveUsers || 0}</span>
+            </div>
+            <div className="flex justify-between items-center">
+              <span className="text-gray-400">Total Plans</span>
+              <span className="text-white font-semibold">{dashboardData?.totalPlans || 0}</span>
             </div>
           </div>
         </div>
