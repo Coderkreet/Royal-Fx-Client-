@@ -37,6 +37,7 @@ export const AuthenticatedRoutes = {
   INCOME_HISTORY_ALL : '/income-history-all',
   ROI_INCOME: "/roi-income",
   ROI_HISTORY:"/roi-history",
+  DAILY_PROFIT: "/daily-profit",
   //  OUR_PLANS : "/our-plans",
 
 };

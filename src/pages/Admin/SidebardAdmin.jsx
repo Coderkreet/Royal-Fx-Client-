@@ -16,7 +16,10 @@ import {
   Wallet,
   Bell,
   HelpCircle,
-  DollarSign
+  DollarSign,
+  PowerOffIcon,
+  LucideMonitorPlay,
+  UploadIcon
 } from 'lucide-react';
 import { AuthenticatedRoutes } from '../../context/Routes';
 
@@ -93,6 +96,12 @@ const SidebardAdmin = () => {
       icon: <DollarSign size={20} />,
       label: 'Income History',
       path: AuthenticatedRoutes.INCOME_HISTORY_ALL
+    },
+      {
+      id: 'daily-profit',
+      icon: <UploadIcon size={20} />,
+      label: 'Daily Profit',
+      path: AuthenticatedRoutes.DAILY_PROFIT
     },
     {
       id: 'Roi-Income',

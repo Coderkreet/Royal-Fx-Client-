@@ -1,4 +1,3 @@
-
 import { Axios } from "../context/MainContent";
 
 const adminApi = "/admin";
@@ -48,6 +47,7 @@ export async function userStatusToggle(id) {
   const response = await Axios.post(`${adminApi}/user-block/${id}`);
   return response?.data;
 }
+
 
 
 
@@ -112,6 +112,15 @@ export async function getFilteredHoldingsByUserId(id) {
   export async function getRoiHistory() {
     const response = await Axios.get(`${adminApi}/get-roi-history`, {
       headers: {
+        Authorization: `Bearer ${token}`
+      }
+    });
+    return response?.data;
+  }
+  export async function uploadFile(base64Data) {
+    const response = await Axios.post(`${adminApi}/upload-file`, { file: base64Data }, {
+      headers: {
+        'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`
       }
     });

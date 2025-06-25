@@ -15,10 +15,10 @@ export const MainContent = {
 };
 
 export const backendConfig = {
-  base: " http://192.168.1.57:6055/api",
-  origin: " http://192.168.1.57:6055",
-  // base: "http://192.168.1.59:6074/api",
-  // origin: "http://192.168.1.59:6074",a
+  base: "http://192.168.218.24:6055/api",
+  origin: "http://192.168.218.24:6055",
+  // base: "http://192.168.1.16:6055/api",
+  // origin: "http://192.168.1.16:6055",
   // base: "https://api.zcoin.dev/api",
   // origin: "https://api.zcoin.dev",
 

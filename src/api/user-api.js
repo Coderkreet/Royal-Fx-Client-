@@ -60,7 +60,7 @@ export async function transferToTopup(payload) {
 }
 
 export async function getUserTransactionHistory() {
-  const response = await Axios.get(`${userApi}/transaction-history`);
+  const response = await Axios.get(`${userApi}/get-transaction-history`);
   return response?.data;
 }
 

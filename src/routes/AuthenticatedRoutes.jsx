@@ -25,6 +25,7 @@ import ActiveUser from "../pages/Admin/ActiveUser";
 import GetIncomeHistory from "../pages/Admin/GetIncomeHistory";
 import ROiIncome from "../pages/Admin/ROiIncome";
 import UserRoiHistory from "../pages/UserRoiHistory";
+import DailyProfit from "../pages/Admin/DailyProfit";
 
 const AuthenticatedRoutesComponent = () => {
   const role = getCurrentUser()?.role;
@@ -94,6 +95,10 @@ const AuthenticatedRoutesComponent = () => {
           <Route
             path={AuthenticatedRoutes.ROI_INCOME}
             element={<AuthLayout inner={<ROiIncome />} className="admin" />}
+          />
+          <Route
+            path={AuthenticatedRoutes.DAILY_PROFIT}
+            element={<AuthLayout inner={<DailyProfit />} className="admin" />}
           />
           {/* Add more admin routes here */}
         </Routes>
